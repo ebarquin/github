@@ -351,6 +351,7 @@ Rails.application.routes.draw do
         end
       end
       resource :notifications, only: [:show, :update]
+      resources :note_templates, except: [:show]
       resource :password, only: [:new, :create, :edit, :update] do
         member do
           put :reset
