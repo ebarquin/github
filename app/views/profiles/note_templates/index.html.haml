@@ -1,0 +1,17 @@
+- page_title "Note Templates"
+
+%h4.page-title
+  Note Templates
+.panel.panel-default
+  .panel-heading
+    Note Templates (#{@note_templates.size})
+    .controls
+      = link_to "New Note Template", new_profile_note_template_path, class: "btn btn-sm btn-success"
+  %ul.well-list
+    - @note_templates.each do |note_template|
+      %li
+        .list-item-name
+          = link_to note_template.title, edit_profile_note_template_path(note_template)
+        .pull-right
+          = link_to 'Edit', edit_profile_note_template_path(note_template), class: "btn btn-sm"
+          = link_to 'Remove', profile_note_template_path(note_template), data: { confirm: "Are you sure?"}, method: :delete, class: "btn btn-sm btn-remove"
