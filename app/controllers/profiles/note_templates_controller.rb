@@ -3,11 +3,8 @@ class Profiles::NoteTemplatesController < Profiles::ApplicationController
   before_action :set_note_template, only: [:edit, :destroy]
 
   def index
-    @note_templates = current_user.note_templates
-  end
-
-  def new
     @note_template = NoteTemplate.new
+    @note_templates = current_user.note_templates
   end
 
   def edit
@@ -23,21 +20,19 @@ class Profiles::NoteTemplatesController < Profiles::ApplicationController
         notice: "'#{@note_template.title}' was successfully created."
       )
     else
-      render 'new'
+      render 'index'
     end
   end
 
   def update
     if @note_template.update_attributes
-      edit_note_profile_template_path(@note_template,
-        notice: "'#{@note_template.title}' was successfully updated."
-      )
+      redirect_to(profile_note_templates_path, notice: "'#{@note_template.title}' was successfully updated.")
     end
   end
 
   def destroy
     if @note_template.destroy
-      redirect_to(profile_note_templates_path, notice: "Note Template was successfully destroyed.")
+      redirect_to(profile_note_templates_path, notice: "Note template was successfully destroyed.")
     end
   end
 

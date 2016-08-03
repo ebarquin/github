@@ -342,6 +342,8 @@ Rails.application.routes.draw do
 
       put :reset_private_token
       put :update_username
+
+      post :markdown_preview
     end
 
     scope module: :profiles do

@@ -1,17 +1,29 @@
 - page_title "Note Templates"
 
-%h4.page-title
-  Note Templates
-.panel.panel-default
-  .panel-heading
-    Note Templates (#{@note_templates.size})
-    .controls
-      = link_to "New Note Template", new_profile_note_template_path, class: "btn btn-sm btn-success"
-  %ul.well-list
-    - @note_templates.each do |note_template|
-      %li
-        .list-item-name
-          = link_to note_template.title, edit_profile_note_template_path(note_template)
-        .pull-right
-          = link_to 'Edit', edit_profile_note_template_path(note_template), class: "btn btn-sm"
-          = link_to 'Remove', profile_note_template_path(note_template), data: { confirm: "Are you sure?"}, method: :delete, class: "btn btn-sm btn-remove"
+.row.prepend-top-default
+  .col-lg-3.profile-settings-sidebar
+    %h4.prepend-top-0
+      = page_title
+    %p Note templates can be used in issues, merge requests, and comments across GitLab.
+    %p They allow you to respond more quickly to common issues and questions.
+  .col-lg-9
+    %h5.prepend-top-0
+      Add a Note Template
+    = render "form", inline: true
+    %hr
+    %h5
+      Note Templates (#{@note_templates.size})
+    - if @note_templates.any?
+      %ul.content-list
+        - @note_templates.each do |note_template|
+          %li
+            .list-item-name
+              = link_to note_template.title, edit_profile_note_template_path(note_template)
+              .description
+                = note_template.note
+            .pull-right
+              = link_to 'Edit', edit_profile_note_template_path(note_template), class: "btn"
+              = link_to 'Remove', profile_note_template_path(note_template), data: { confirm: "Are you sure?"}, method: :delete, class: "btn btn-remove"
+    - else
+      %p.settings-message.text-center
+        You haven't created any note templates yet.
