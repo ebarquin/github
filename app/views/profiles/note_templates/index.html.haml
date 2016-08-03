@@ -16,12 +16,12 @@
     - if @note_templates.any?
       %ul.content-list
         - @note_templates.each do |note_template|
-          %li
-            .list-item-name
+          %li.list-item-with-description
+            .list-item-info
               = link_to note_template.title, edit_profile_note_template_path(note_template)
               .description
                 = note_template.note
-            .pull-right
+            .pull-right.btn-container
               = link_to 'Edit', edit_profile_note_template_path(note_template), class: "btn"
               = link_to 'Remove', profile_note_template_path(note_template), data: { confirm: "Are you sure?"}, method: :delete, class: "btn btn-remove"
     - else
