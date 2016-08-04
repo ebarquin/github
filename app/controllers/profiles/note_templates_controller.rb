@@ -32,7 +32,7 @@ class Profiles::NoteTemplatesController < Profiles::ApplicationController
 
   def destroy
     if @note_template.destroy
-      redirect_to(profile_note_templates_path, notice: "Note template was successfully destroyed.")
+      redirect_to(profile_note_templates_path, notice: "Note template was successfully deleted.")
     end
   end
 
