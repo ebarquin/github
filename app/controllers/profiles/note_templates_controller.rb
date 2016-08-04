@@ -5,6 +5,13 @@ class Profiles::NoteTemplatesController < Profiles::ApplicationController
   def index
     @note_template = NoteTemplate.new
     @note_templates = current_user.note_templates
+
+    respond_to do |format|
+      format.html
+      format.json do 
+        render json: @note_templates
+      end
+    end
   end
 
   def edit

@@ -1,32 +1,31 @@
 (function() {
   this.NoteTemplate = (function() {
     function NoteTemplate() {
-      this.initNoteTemplateDropdown();
+      $(document).on('click', '.js-note-template-btn', function(e) {
+        return $(e.currentTarget).initNoteTemplateDropdown();
     }
 
     NoteTemplate.prototype.initNoteTemplateDropdown = function() {
-      return $('.js-note-template-dropdown').each(function() {
-        var $dropdown, selected;
+      return $('.js-note-template-btn').each(function() {
+        var $dropdown;
         $dropdown = $(this);
-        selected = $dropdown.data('selected');
         return $dropdown.glDropdown({
           data: function(term, callback) {
             return $.ajax({
-              url: $dropdown.data('refs-url'),
+              url: $dropdown.data('note-templates-url'),
               data: {
-                ref: $dropdown.data('ref')
+                ref: $dropdown.data('note-template')
               }
             }).done(function(refs) {
               return callback(refs);
             });
           },
-          selectable: true,
+          selectable: false,
           filterable: true,
           filterByText: true,
-          fieldName: 'ref',
-          renderRow: function(ref) {
+          renderRow: function(template) {
             var link;
-            link = $('<a />').attr('href', '#').addClass(ref === selected ? 'is-active' : '').text(ref).attr('data-ref', escape(ref));
+            link = $('<a />').attr('href', '#').text(template).attr('data-template', escape(template));
             return $('<li />').append(link);
           },
           id: function(obj, $el) {
