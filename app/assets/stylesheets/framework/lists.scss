@@ -164,29 +164,6 @@ ul.content-list {
       }
     }
 
-    &.list-item-with-description {
-      display: flex;
-
-      @media (max-width: $screen-xs-max) {
-        flex-flow: column wrap;
-      }
-
-      .list-item-info {
-        overflow: hidden;
-        flex: 1;
-      }
-
-      .description {
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
-
-      .btn-container {
-        padding: 8px 0;
-      }
-    }
-
     // When dragging a list item
     &.ui-sortable-helper {
       border-bottom: none;

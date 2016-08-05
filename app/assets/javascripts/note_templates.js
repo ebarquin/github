@@ -3,6 +3,7 @@
     function NoteTemplate() {
       $(document).on('click', '.js-note-template-btn', function(e) {
         return $(e.currentTarget).initNoteTemplateDropdown();
+      });
     }
 
     NoteTemplate.prototype.initNoteTemplateDropdown = function() {
