@@ -6,6 +6,9 @@ module API
   module APIGuard
     extend ActiveSupport::Concern
 
+    PRIVATE_TOKEN_HEADER = "HTTP_PRIVATE_TOKEN"
+    PRIVATE_TOKEN_PARAM = :private_token
+
     included do |base|
       # OAuth2 Resource Server Authentication
       use Rack::OAuth2::Server::Resource::Bearer, 'The API' do |request|
@@ -76,6 +79,11 @@ module API
         end
       end
 
+      def find_user_by_private_token(scopes: [])
+        token_string = (params[PRIVATE_TOKEN_PARAM] || env[PRIVATE_TOKEN_HEADER]).to_s
+        find_user_by_authentication_token(token_string) || find_user_by_personal_access_token(token_string, scopes)
+      end
+
       def current_user
         @current_user
       end
@@ -93,6 +101,19 @@ module API
       end
 
       private
+
+      def find_user_by_authentication_token(token_string)
+        User.find_by_authentication_token(token_string)
+      end
+
+      def find_user_by_personal_access_token(token_string, scopes)
+        access_token = PersonalAccessToken.active.find_by_token(token_string)
+        return unless access_token
+
+        if Oauth2::AccessTokenValidationService.sufficient_scope?(access_token, scopes)
+          User.find(access_token.user_id)
+        end
+      end
 
       def find_access_token
         @access_token ||= Doorkeeper.authenticate(doorkeeper_request, Doorkeeper.configuration.access_token_methods)
