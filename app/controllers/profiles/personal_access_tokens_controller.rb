@@ -3,6 +3,7 @@ class Profiles::PersonalAccessTokensController < Profiles::ApplicationController
 
   def index
     @personal_access_token = current_user.personal_access_tokens.build
+    @scopes = Doorkeeper.configuration.scopes
   end
 
   def create
@@ -32,7 +33,7 @@ class Profiles::PersonalAccessTokensController < Profiles::ApplicationController
   private
 
   def personal_access_token_params
-    params.require(:personal_access_token).permit(:name, :expires_at)
+    params.require(:personal_access_token).permit(:name, :expires_at, scopes: [])
   end
 
   def load_personal_access_tokens
