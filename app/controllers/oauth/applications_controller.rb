@@ -6,6 +6,7 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
   before_action :verify_user_oauth_applications_enabled
   before_action :authenticate_user!
   before_action :add_gon_variables
+  before_action :prepare_scopes, only: [:create]
 
   layout 'profile'
 
@@ -40,6 +41,7 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
     @authorized_tokens = current_user.oauth_authorized_tokens
     @authorized_anonymous_tokens = @authorized_tokens.reject(&:application)
     @authorized_apps = @authorized_tokens.map(&:application).uniq.reject(&:nil?)
+    @scopes = Doorkeeper.configuration.scopes
 
     # Don't overwrite a value possibly set by `create`
     @application ||= Doorkeeper::Application.new
@@ -52,5 +54,12 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
 
   rescue_from ActiveRecord::RecordNotFound do |exception|
     render "errors/not_found", layout: "errors", status: 404
+  end
+
+  def prepare_scopes
+    scopes = params.dig(:doorkeeper_application, :scopes)
+    if scopes
+      params[:doorkeeper_application][:scopes] = scopes.join(' ')
+    end
   end
 end
