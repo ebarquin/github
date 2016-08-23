@@ -80,6 +80,18 @@ module API
         @current_user
       end
 
+      # Set the authorization scope(s) allowed for the current request.
+      #
+      # Note: A call to this method adds to any previous scopes in place. This is done because
+      # `Grape` callbacks run from the outside-in: the top-level callback (API::API) runs first, then
+      # the next-level callback (API::API::Users, for example) runs. All these scopes are valid for the
+      # given endpoint (GET `/api/users` is accessible by the `api` and `read_user` scopes), and so they
+      # need to be stored.
+      def allow_access_with_scope(*scopes)
+        @scopes ||= []
+        @scopes.concat(scopes.map(&:to_s))
+      end
+
       private
 
       def find_access_token

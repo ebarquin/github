@@ -18,7 +18,7 @@ module API
     end
 
     def current_user
-      @current_user ||= (find_user_by_private_token || doorkeeper_guard)
+      @current_user ||= (find_user_by_private_token || doorkeeper_guard(scopes: @scopes))
 
       unless @current_user && Gitlab::UserAccess.new(@current_user).allowed?
         return nil

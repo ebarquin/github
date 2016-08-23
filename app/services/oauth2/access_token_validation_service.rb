@@ -25,17 +25,12 @@ module Oauth2::AccessTokenValidationService
 
     # True if the token's scope is a superset of required scopes,
     # or the required scopes is empty.
-    def sufficient_scope?(token, scopes)
-      if scopes.blank?
-        # if no any scopes required, the scopes of token is sufficient.
-        return true
+    def sufficient_scope?(token, required_scopes)
+      if required_scopes.blank?
+        true
       else
-        # If there are scopes required, then check whether
-        # the set of authorized scopes is a superset of the set of required scopes
-        required_scopes = Set.new(scopes)
-        authorized_scopes = Set.new(token.scopes)
-
-        return authorized_scopes >= required_scopes
+        # Check whether the token is allowed access to any of the required scopes.
+        Set.new(required_scopes).intersection(Set.new(token.scopes)).present?
       end
     end
   end
