@@ -3,7 +3,7 @@ class Profiles::PersonalAccessTokensController < Profiles::ApplicationController
 
   def index
     @personal_access_token = current_user.personal_access_tokens.build
-    @scopes = Doorkeeper.configuration.scopes
+    @scopes = Gitlab::Auth::SCOPES
   end
 
   def create
