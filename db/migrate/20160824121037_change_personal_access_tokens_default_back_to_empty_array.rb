@@ -1,7 +1,7 @@
 # See http://doc.gitlab.com/ce/development/migration_style_guide.html
 # for more information on how to write migrations for GitLab.
 
-class AddColumnScopesToPersonalAccessTokens < ActiveRecord::Migration
+class ChangePersonalAccessTokensDefaultBackToEmptyArray < ActiveRecord::Migration
   include Gitlab::Database::MigrationHelpers
 
   # Set this constant to true if this migration requires downtime.
@@ -21,16 +21,19 @@ class AddColumnScopesToPersonalAccessTokens < ActiveRecord::Migration
   #
   # To disable transactions uncomment the following line and remove these
   # comments:
-  disable_ddl_transaction!
+  # disable_ddl_transaction!
 
   def up
     # The default needs to be `[]`, but all existing access tokens need to have `scopes` set to `['api']`.
     # It's easier to achieve this by adding the column with the `['api']` default, and then changing the default to
     # `[]`.
-    add_column_with_default :personal_access_tokens, :scopes, :string, array: true, default: ['api']
+    change_column_default :personal_access_tokens, :scopes, []
   end
 
   def down
-    remove_column :personal_access_tokens, :scopes
+    # The default needs to be `[]`, but all existing access tokens need to have `scopes` set to `['api']`.
+    # It's easier to achieve this by adding the column with the `['api']` default, and then changing the default to
+    # `[]`.
+    change_column_default :personal_access_tokens, :scopes, ['api']
   end
 end
