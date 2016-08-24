@@ -2,16 +2,20 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
   include Gitlab::CurrentSettings
   include Gitlab::GonHelper
   include PageLayoutHelper
+  include OauthApplications
 
   before_action :verify_user_oauth_applications_enabled
   before_action :authenticate_user!
   before_action :add_gon_variables
-  before_action :prepare_scopes, only: [:create]
 
   layout 'profile'
 
   def index
     set_index_vars
+  end
+
+  def edit
+    @scopes = Doorkeeper.configuration.scopes
   end
 
   def create
@@ -54,12 +58,5 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
 
   rescue_from ActiveRecord::RecordNotFound do |exception|
     render "errors/not_found", layout: "errors", status: 404
-  end
-
-  def prepare_scopes
-    scopes = params.dig(:doorkeeper_application, :scopes)
-    if scopes
-      params[:doorkeeper_application][:scopes] = scopes.join(' ')
-    end
   end
 end
