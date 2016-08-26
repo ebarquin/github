@@ -1,13 +1,14 @@
 (function() {
   this.NoteTemplate = (function() {
     function NoteTemplate() {
-      $(document).on('click', '.js-note-template-btn', function(e) {
-        return $(e.currentTarget).initNoteTemplateDropdown();
-      });
+      this.initNoteTemplateDropdown();
+      console.log("Test");
     }
 
     NoteTemplate.prototype.initNoteTemplateDropdown = function() {
+      console.log("Test2");
       return $('.js-note-template-btn').each(function() {
+        console.log("Test51");
         var $dropdown;
         $dropdown = $(this);
         return $dropdown.glDropdown({
@@ -15,10 +16,11 @@
             return $.ajax({
               url: $dropdown.data('note-templates-url'),
               data: {
-                ref: $dropdown.data('note-template')
-              }
-            }).done(function(refs) {
-              return callback(refs);
+                note_template: $dropdown.data('note-template')
+              },
+              dataType: "json"
+            }).done(function(templates) {
+              return callback(templates);
             });
           },
           selectable: false,
@@ -26,17 +28,18 @@
           filterByText: true,
           renderRow: function(template) {
             var link;
-            link = $('<a />').attr('href', '#').text(template).attr('data-template', escape(template));
+            link = $('<a />').attr('href', '#').text(template.title).attr('data-template', escape(template.title));
             return $('<li />').append(link);
           },
           id: function(obj, $el) {
-            return $el.attr('data-ref');
+            return $el.attr('data-note-template');
           },
           toggleLabel: function(obj, $el) {
             return $el.text().trim();
           },
           clicked: function(e) {
-            return $dropdown.closest('form').submit();
+            console.log("CLICKED");
+            return $dropdown.closest('form').val();
           }
         });
       });
