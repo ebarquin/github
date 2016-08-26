@@ -2,11 +2,9 @@
   this.NoteTemplate = (function() {
     function NoteTemplate() {
       this.initNoteTemplateDropdown();
-      console.log("Test");
     }
 
     NoteTemplate.prototype.initNoteTemplateDropdown = function() {
-      console.log("Test2");
       return $('.js-note-template-btn').each(function() {
         console.log("Test51");
         var $dropdown;
@@ -27,9 +25,7 @@
           filterable: true,
           filterByText: true,
           renderRow: function(template) {
-            var link;
-            link = $('<a />').attr('href', '#').text(template.title).attr('data-template', escape(template.title));
-            return $('<li />').append(link);
+            return _.template('<li><a href="#" class="dropdown-menu-item-with-description"><span class="dropdown-menu-item-header"><%- title %></span><span class="dropdown-menu-item-body"><%- note %></span></a></li>')({ title: template.title, note: template.note });
           },
           id: function(obj, $el) {
             return $el.attr('data-note-template');
@@ -38,7 +34,7 @@
             return $el.text().trim();
           },
           clicked: function(e) {
-            console.log("CLICKED");
+            e.preventDefault();
             return $dropdown.closest('form').val();
           }
         });

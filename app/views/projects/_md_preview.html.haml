@@ -14,7 +14,7 @@
           %span This is a confidential issue. Your comment will not be visible to the public.
 
       %li.pull-right
-        .toolbar-group.js-note-template-dropdown.dropdown
+        .toolbar-group
           = markdown_toolbar_button({icon: "bold fw", data: { "md-tag" => "**" }, title: "Add bold text" })
           = markdown_toolbar_button({icon: "italic fw", data: { "md-tag" => "*" }, title: "Add italic text" })
           = markdown_toolbar_button({icon: "quote-right fw", data: { "md-tag" => "> ", "md-prepend" => true }, title: "Insert a quote" })
@@ -25,11 +25,12 @@
           - unless defined?(disable_note_templates)
             %button.toolbar-btn.js-note-template-btn.has-tooltip.hidden-xs{ type: "button", tabindex: -1, title: "Add a note template", data: { note_templates_url: profile_note_templates_path, target: '.js-note-template-dropdown', toggle: 'dropdown' } }
               = icon("sticky-note fw")
+          .js-note-template-dropdown.dropdown
             .dropdown-menu
               = dropdown_title "Select note template"
               = dropdown_content
               = dropdown_loading
-
+              
         .toolbar-group
           %button.toolbar-btn.js-zen-enter.has-tooltip.hidden-xs{ type: "button", tabindex: -1, title: "Go full screen", data: { container: "body" } }
             = icon("arrows-alt fw")

@@ -242,11 +242,13 @@
   }
 }
 
+.dropdown-menu-item-with-description,
 .dropdown-menu-user-link {
   padding-top: 10px;
   padding-bottom: 7px;
 }
 
+.dropdown-menu-item-header,
 .dropdown-menu-user-full-name {
   display: block;
   font-weight: 500;
@@ -256,6 +258,7 @@
   white-space: nowrap;
 }
 
+.dropdown-menu-item-body,
 .dropdown-menu-user-username {
   display: block;
   line-height: 16px;
