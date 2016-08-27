@@ -1,11 +1,16 @@
 .md-area
   .md-header
-    .js-note-template-dropdown.dropdown
-      .dropdown-menu.dropdown-menu-large.dropdown-menu-align-right
-        = dropdown_title "Select note template"
-        = dropdown_content
-        = dropdown_loading
-    
+    - unless defined?(disable_note_templates)
+      .js-note-template-dropdown.dropdown
+        .dropdown-menu.dropdown-menu-large.dropdown-menu-align-right
+          = dropdown_title "Select note template"
+          = dropdown_content
+          = dropdown_footer do
+            %ul.dropdown-footer-list
+              %li
+                = link_to "Create new note template", profile_note_templates_path
+          = dropdown_loading
+
     %ul.nav-links.clearfix
       %li.active
         %a.js-md-write-button{ href: "#md-write-holder", tabindex: -1 }

@@ -13,9 +13,6 @@
           data: function(term, callback) {
             return $.ajax({
               url: $dropdown.data('note-templates-url'),
-              data: {
-                note_template: $dropdown.data('note-template')
-              },
               dataType: "json"
             }).done(function(templates) {
               return callback(templates);
