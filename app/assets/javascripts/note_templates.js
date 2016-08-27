@@ -6,7 +6,6 @@
 
     NoteTemplate.prototype.initNoteTemplateDropdown = function() {
       return $('.js-note-template-btn').each(function() {
-        console.log("Test51");
         var $dropdown, $textarea;
         $dropdown = $(this);
         $textarea = $dropdown.parents(".md-area").find("textarea");
