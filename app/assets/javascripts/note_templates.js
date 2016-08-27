@@ -7,8 +7,9 @@
     NoteTemplate.prototype.initNoteTemplateDropdown = function() {
       return $('.js-note-template-btn').each(function() {
         console.log("Test51");
-        var $dropdown;
+        var $dropdown, $textarea;
         $dropdown = $(this);
+        $textarea = $dropdown.parents(".md-area").find("textarea");
         return $dropdown.glDropdown({
           data: function(term, callback) {
             return $.ajax({
@@ -21,7 +22,7 @@
               return callback(templates);
             });
           },
-          selectable: false,
+          selectable: true,
           filterable: true,
           filterByText: true,
           renderRow: function(template) {
@@ -30,12 +31,9 @@
           id: function(obj, $el) {
             return $el.attr('data-note-template');
           },
-          toggleLabel: function(obj, $el) {
-            return $el.text().trim();
-          },
-          clicked: function(e) {
+          clicked: function(selected, $el, e) {
             e.preventDefault();
-            return $dropdown.closest('form').val();
+            return window.gl.text.updateText($textarea, selected.note, false, false);
           }
         });
       });
