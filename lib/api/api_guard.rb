@@ -43,36 +43,15 @@ module API
       #   scopes: (optional) scopes required for this guard.
       #           Defaults to empty array.
       #
-      def doorkeeper_guard!(scopes: [])
-        if (access_token = find_access_token).nil?
-          raise TokenNotFoundError
-
-        else
-          case validate_access_token(access_token, scopes)
-          when AccessTokenValidationService::INSUFFICIENT_SCOPE
-            raise InsufficientScopeError.new(scopes)
-          when AccessTokenValidationService::EXPIRED
-            raise ExpiredError
-          when AccessTokenValidationService::REVOKED
-            raise RevokedError
-          when AccessTokenValidationService::VALID
-            @current_user = User.find(access_token.resource_owner_id)
-          end
-        end
-      end
-
       def doorkeeper_guard(scopes: [])
         if access_token = find_access_token
-          case validate_access_token(access_token, scopes)
+          case AccessTokenValidationService.validate(access_token, scopes: scopes)
           when AccessTokenValidationService::INSUFFICIENT_SCOPE
             raise InsufficientScopeError.new(scopes)
-
           when AccessTokenValidationService::EXPIRED
             raise ExpiredError
-
           when AccessTokenValidationService::REVOKED
             raise RevokedError
-
           when AccessTokenValidationService::VALID
             @current_user = User.find(access_token.resource_owner_id)
           end
@@ -121,10 +100,6 @@ module API
 
       def doorkeeper_request
         @doorkeeper_request ||= ActionDispatch::Request.new(env)
-      end
-
-      def validate_access_token(access_token, scopes)
-        AccessTokenValidationService.validate(access_token, scopes: scopes)
       end
     end
 
