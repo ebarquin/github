@@ -1,7 +1,8 @@
 - form_class = inline ? '' : 'form-horizontal' 
 - label_class = inline ? 'label-light' : 'control-label'
+- note_template_form_url = inline ? profile_note_templates_path : profile_note_template_path(@note_template)
 
-= form_for @note_template, url: profile_note_templates_path, html: { class: "#{form_class} common-note-form js-quick-submit js-requires-input js-note-template-form" } do |f|
+= form_for @note_template, url: note_template_form_url, html: { class: "#{form_class} common-note-form js-quick-submit js-requires-input js-note-template-form" } do |f|
   .form-group
     = f.label :title, 'Title', class: "#{label_class}"
     - if inline
@@ -37,7 +38,7 @@
       = f.submit 'Create note template', class: "btn btn-create", tabindex: 4
   - else
     .form-actions
-      = f.submit 'Create note template', class: "btn btn-create", tabindex: 4
+      = f.submit 'Save note template', class: "btn btn-create", tabindex: 4
       = link_to 'Cancel', profile_note_templates_path, class: 'btn btn-cancel'
 
 :javascript
