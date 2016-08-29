@@ -9,7 +9,7 @@ class Profiles::NoteTemplatesController < Profiles::ApplicationController
     respond_to do |format|
       format.html
       format.json do 
-        render json: @note_templates
+        render json: @note_templates, only: [:title, :note]
       end
     end
   end

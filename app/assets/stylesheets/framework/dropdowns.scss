@@ -248,6 +248,7 @@
   padding-bottom: 7px;
 }
 
+
 .dropdown-menu-item-header,
 .dropdown-menu-user-full-name {
   display: block;
@@ -256,6 +257,11 @@
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+
+  &.dropdown-menu-note-template-header {
+    font-weight: 600;
+    padding-bottom: 4px;
+  }
 }
 
 .dropdown-menu-item-body,
