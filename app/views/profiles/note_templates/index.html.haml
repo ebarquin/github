@@ -19,7 +19,7 @@
           %li
             .controls
               = link_to 'Edit', edit_profile_note_template_path(note_template), class: "btn"
-              = link_to 'Remove', profile_note_template_path(note_template), data: { confirm: "Are you sure?"}, method: :delete, class: "btn btn-remove"
+              = link_to 'Delete', profile_note_template_path(note_template), data: { confirm: "Are you sure?"}, method: :delete, class: "btn btn-remove"
             .title
               = link_to note_template.title, edit_profile_note_template_path(note_template)
             .description
