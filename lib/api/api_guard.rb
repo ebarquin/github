@@ -49,13 +49,13 @@ module API
 
         else
           case validate_access_token(access_token, scopes)
-          when Oauth2::AccessTokenValidationService::INSUFFICIENT_SCOPE
+          when AccessTokenValidationService::INSUFFICIENT_SCOPE
             raise InsufficientScopeError.new(scopes)
-          when Oauth2::AccessTokenValidationService::EXPIRED
+          when AccessTokenValidationService::EXPIRED
             raise ExpiredError
-          when Oauth2::AccessTokenValidationService::REVOKED
+          when AccessTokenValidationService::REVOKED
             raise RevokedError
-          when Oauth2::AccessTokenValidationService::VALID
+          when AccessTokenValidationService::VALID
             @current_user = User.find(access_token.resource_owner_id)
           end
         end
@@ -64,16 +64,16 @@ module API
       def doorkeeper_guard(scopes: [])
         if access_token = find_access_token
           case validate_access_token(access_token, scopes)
-          when Oauth2::AccessTokenValidationService::INSUFFICIENT_SCOPE
+          when AccessTokenValidationService::INSUFFICIENT_SCOPE
             raise InsufficientScopeError.new(scopes)
 
-          when Oauth2::AccessTokenValidationService::EXPIRED
+          when AccessTokenValidationService::EXPIRED
             raise ExpiredError
 
-          when Oauth2::AccessTokenValidationService::REVOKED
+          when AccessTokenValidationService::REVOKED
             raise RevokedError
 
-          when Oauth2::AccessTokenValidationService::VALID
+          when AccessTokenValidationService::VALID
             @current_user = User.find(access_token.resource_owner_id)
           end
         end
@@ -110,7 +110,7 @@ module API
         access_token = PersonalAccessToken.active.find_by_token(token_string)
         return unless access_token
 
-        if Oauth2::AccessTokenValidationService.sufficient_scope?(access_token, scopes)
+        if AccessTokenValidationService.sufficient_scope?(access_token, scopes)
           User.find(access_token.user_id)
         end
       end
@@ -124,7 +124,7 @@ module API
       end
 
       def validate_access_token(access_token, scopes)
-        Oauth2::AccessTokenValidationService.validate(access_token, scopes: scopes)
+        AccessTokenValidationService.validate(access_token, scopes: scopes)
       end
     end
 

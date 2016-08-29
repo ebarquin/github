@@ -122,7 +122,7 @@ module Gitlab
       end
 
       def token_has_scope?(token)
-        Oauth2::AccessTokenValidationService.sufficient_scope?(token, ['api'])
+        AccessTokenValidationService.sufficient_scope?(token, ['api'])
       end
     end
   end

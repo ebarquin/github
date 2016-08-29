@@ -1,4 +1,4 @@
-module Oauth2::AccessTokenValidationService
+module AccessTokenValidationService
   # Results:
   VALID = :valid
   EXPIRED = :expired
