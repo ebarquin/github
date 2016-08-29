@@ -30,7 +30,7 @@ class NoteTemplateDropdown {
       },
       clicked(selected, $el, e) {
         e.preventDefault();
-        return window.gl.text.updateText(this.$textarea, selected.note, false, false);
+        return window.gl.text.updateText(_this.$textarea, selected.note, false, false);
       }
     });
   }
