@@ -134,7 +134,7 @@ module Gitlab
       #
       # This method can also take a block which is passed directly to the
       # `update_column_in_batches` method.
-      def add_column_with_default(table, column, type, default:, allow_null: false, array: false, &block)
+      def add_column_with_default(table, column, type, default:, allow_null: false, &block)
         if transaction_open?
           raise 'add_column_with_default can not be run inside a transaction, ' \
             'you can disable transactions by calling disable_ddl_transaction! ' \
@@ -144,7 +144,7 @@ module Gitlab
         disable_statement_timeout
 
         transaction do
-          add_column(table, column, type, default: nil, array: array)
+          add_column(table, column, type, default: nil)
 
           # Changing the default before the update ensures any newly inserted
           # rows already use the proper default value.

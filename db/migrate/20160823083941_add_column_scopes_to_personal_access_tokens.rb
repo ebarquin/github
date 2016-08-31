@@ -27,7 +27,7 @@ class AddColumnScopesToPersonalAccessTokens < ActiveRecord::Migration
     # The default needs to be `[]`, but all existing access tokens need to have `scopes` set to `['api']`.
     # It's easier to achieve this by adding the column with the `['api']` default, and then changing the default to
     # `[]`.
-    add_column_with_default :personal_access_tokens, :scopes, :string, array: true, default: ['api']
+    add_column_with_default :personal_access_tokens, :scopes, :string, default: ['api'].to_yaml
   end
 
   def down
