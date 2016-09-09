@@ -237,9 +237,13 @@
             this.expandViewContainer();
           }
           this.diffsLoaded = true;
-          this.scrollToElement('#diffs');
 
-          new gl.Diff();
+          const diffPage = new gl.Diff();
+
+          const anchoredDiff = gl.utils.getLocationHash().split('_')[0];
+          if (anchoredDiff) {
+            diffPage.openAnchoredDiff(anchoredDiff, () => this.scrollToElement('#diffs'));
+          }
         },
       });
     }
