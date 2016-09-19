@@ -1,7 +1,8 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.7.1'
+gem 'rails', '5.0.0.1'
 gem 'rails-deprecated_sanitizer', '~> 1.0.3'
+gem 'rails-controller-testing'
 
 # Responders respond_to and respond_with
 gem 'responders', '~> 2.0'
@@ -51,7 +52,7 @@ gem 'browser', '~> 2.2'
 
 # Extracting information from a git repository
 # Provide access to Gitlab::Git library
-gem 'gitlab_git', '~> 10.7.0'
+gem 'gitlab_git', git: 'https://gitlab.com/gitlab-org/gitlab_git'
 
 # LDAP Auth
 # GitLab fork with several improvements to original library. For full list of changes
@@ -100,7 +101,7 @@ gem 'seed-fu', '~> 2.3.5'
 
 # Markdown and HTML processing
 gem 'html-pipeline',      '~> 1.11.0'
-gem 'deckar01-task_list', '1.0.6', require: 'task_list/railtie'
+gem 'deckar01-task_list', require: 'task_list/railtie', git: 'https://gitlab.com/connorshea/task_list.git'
 gem 'gitlab-markup',      '~> 1.5.0'
 gem 'redcarpet',          '~> 3.3.3'
 gem 'RedCloth',           '~> 4.3.2'
@@ -134,7 +135,7 @@ gem 'after_commit_queue', '~> 1.3.0'
 gem 'acts-as-taggable-on', '~> 4.0'
 
 # Background jobs
-gem 'sidekiq', '~> 4.2'
+gem 'sidekiq', '~> 4.2.1'
 gem 'sidekiq-cron', '~> 0.4.0'
 gem 'redis-namespace', '~> 1.5.2'
 gem 'sidekiq-limit_fetch', '~> 3.4'
@@ -310,7 +311,7 @@ group :development, :test do
   gem 'license_finder', '~> 2.1.0', require: false
   gem 'knapsack', '~> 1.11.0'
 
-  gem 'activerecord_sane_schema_dumper', '0.2'
+  gem 'activerecord_sane_schema_dumper', '~> 1.0'
 end
 
 group :test do
@@ -341,7 +342,7 @@ gem 'nested_form', '~> 0.3.2'
 gem 'oauth2', '~> 1.2.0'
 
 # Soft deletion
-gem 'paranoia', '~> 2.0'
+gem 'paranoia', '~> 2.2.0.pre'
 
 # Health check
 gem 'health_check', '~> 2.2.0'
