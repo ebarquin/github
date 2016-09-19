@@ -7,7 +7,7 @@ class Dashboard::ProjectsController < Dashboard::ApplicationController
     @projects = current_user.authorized_projects.sorted_by_activity
     @projects = filter_projects(@projects)
     @projects = @projects.includes(:namespace)
-    @projects = @projects.sort(@sort = params[:sort])
+    # @projects = @projects.sort(@sort = params[:sort])
     @projects = @projects.page(params[:page])
 
     @last_push = current_user.recent_push
@@ -31,7 +31,7 @@ class Dashboard::ProjectsController < Dashboard::ApplicationController
     @projects = current_user.viewable_starred_projects.sorted_by_activity
     @projects = filter_projects(@projects)
     @projects = @projects.includes(:namespace, :forked_from_project, :tags)
-    @projects = @projects.sort(@sort = params[:sort])
+    # @projects = @projects.sort(@sort = params[:sort])
     @projects = @projects.page(params[:page])
 
     @last_push = current_user.recent_push
