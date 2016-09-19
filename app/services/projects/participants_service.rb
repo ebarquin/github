@@ -27,7 +27,7 @@ module Projects
     end
 
     def sorted(users)
-      users.uniq.to_a.compact.sort_by(&:username).map do |user|
+      users.distinct.to_a.compact.sort_by(&:username).map do |user|
         { username: user.username, name: user.name }
       end
     end
