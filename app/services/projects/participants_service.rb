@@ -27,7 +27,7 @@ module Projects
     end
 
     def sorted(users)
-      users.distinct.to_a.compact.sort_by(&:username).map do |user|
+      users.uniq.to_a.compact.sort_by(&:username).map do |user|
         { username: user.username, name: user.name }
       end
     end
@@ -40,7 +40,7 @@ module Projects
     end
 
     def all_members
-      count = project.team.members.flatten.count
+      count = project.team.members.count
       [{ username: "all", name: "All Project and Group Members", count: count }]
     end
   end
