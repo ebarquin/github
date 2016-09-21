@@ -5,7 +5,7 @@ class TagsFinder
   end
 
   def execute
-    tags = @repository.tags_sorted_by(sort)
+    tags = @repository.tags_sorted_by(sort2)
     filter_by_name(tags)
   end
 
