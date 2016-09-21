@@ -200,7 +200,7 @@ class User < ActiveRecord::Base
       end
     end
 
-    def sort(method)
+    def sort2(method)
       case method.to_s
       when 'recent_sign_in' then reorder(last_sign_in_at: :desc)
       when 'oldest_sign_in' then reorder(last_sign_in_at: :asc)

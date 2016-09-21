@@ -400,7 +400,7 @@ class Project < ActiveRecord::Base
       Gitlab::VisibilityLevel.options
     end
 
-    def sort(method)
+    def sort2(method)
       if method == 'repository_size_desc'
         reorder(repository_size: :desc, id: :desc)
       else

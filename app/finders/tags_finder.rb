@@ -11,7 +11,7 @@ class TagsFinder
 
   private
 
-  def sort
+  def sort2
     @params[:sort].presence
   end
 

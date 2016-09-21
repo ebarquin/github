@@ -46,7 +46,7 @@ class Group < Namespace
       where(table[:name].matches(pattern).or(table[:path].matches(pattern)))
     end
 
-    def sort(method)
+    def sort2(method)
       order_by(method)
     end
 
