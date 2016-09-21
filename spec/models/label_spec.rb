@@ -7,10 +7,24 @@ describe Label, models: true do
   end
 
   describe 'associations' do
+<<<<<<< HEAD
     it { is_expected.to have_many(:issues).through(:label_links).source(:target) }
     it { is_expected.to have_many(:label_links).dependent(:destroy) }
     it { is_expected.to have_many(:lists).dependent(:destroy) }
     it { is_expected.to have_many(:priorities).class_name('LabelPriority') }
+=======
+    it { is_expected.to belong_to(:project) }
+
+    it { is_expected.to have_many(:label_links) }
+    it { is_expected.to have_many(:issues).through(:label_links).source(:target) }
+    it { is_expected.to have_many(:lists) }
+  end
+
+  describe 'modules' do
+    subject { described_class }
+
+    it { is_expected.to include_module(Referable) }
+>>>>>>> Use foreign keys with cascade delete to optimize project removal
   end
 
   describe 'validation' do

@@ -7,17 +7,18 @@ describe Project, models: true do
     it { is_expected.to belong_to(:creator).class_name('User') }
     it { is_expected.to have_many(:users) }
     it { is_expected.to have_many(:services) }
-    it { is_expected.to have_many(:events).dependent(:destroy) }
-    it { is_expected.to have_many(:merge_requests).dependent(:destroy) }
-    it { is_expected.to have_many(:issues).dependent(:destroy) }
-    it { is_expected.to have_many(:milestones).dependent(:destroy) }
+    it { is_expected.to have_many(:events) }
+    it { is_expected.to have_many(:merge_requests) }
+    it { is_expected.to have_many(:issues) }
+    it { is_expected.to have_many(:milestones) }
     it { is_expected.to have_many(:project_members).dependent(:destroy) }
     it { is_expected.to have_many(:users).through(:project_members) }
     it { is_expected.to have_many(:requesters).dependent(:destroy) }
-    it { is_expected.to have_many(:notes).dependent(:destroy) }
-    it { is_expected.to have_many(:snippets).class_name('ProjectSnippet').dependent(:destroy) }
+    it { is_expected.to have_many(:notes) }
+    it { is_expected.to have_many(:snippets).class_name('ProjectSnippet') }
     it { is_expected.to have_many(:deploy_keys_projects).dependent(:destroy) }
     it { is_expected.to have_many(:deploy_keys) }
+<<<<<<< HEAD
     it { is_expected.to have_many(:hooks).dependent(:destroy) }
     it { is_expected.to have_many(:protected_branches).dependent(:destroy) }
     it { is_expected.to have_one(:forked_project_link).dependent(:destroy) }
@@ -47,6 +48,37 @@ describe Project, models: true do
     it { is_expected.to have_one(:external_wiki_service).dependent(:destroy) }
     it { is_expected.to have_one(:project_feature).dependent(:destroy) }
     it { is_expected.to have_one(:import_data).class_name('ProjectImportData').dependent(:destroy) }
+=======
+    it { is_expected.to have_many(:hooks) }
+    it { is_expected.to have_many(:protected_branches) }
+    it { is_expected.to have_one(:forked_project_link) }
+    it { is_expected.to have_one(:slack_service) }
+    it { is_expected.to have_one(:pushover_service) }
+    it { is_expected.to have_one(:asana_service) }
+    it { is_expected.to have_one(:board) }
+    it { is_expected.to have_one(:campfire_service) }
+    it { is_expected.to have_one(:drone_ci_service) }
+    it { is_expected.to have_one(:emails_on_push_service) }
+    it { is_expected.to have_one(:builds_email_service) }
+    it { is_expected.to have_one(:emails_on_push_service) }
+    it { is_expected.to have_one(:irker_service) }
+    it { is_expected.to have_one(:pivotaltracker_service) }
+    it { is_expected.to have_one(:hipchat_service) }
+    it { is_expected.to have_one(:flowdock_service) }
+    it { is_expected.to have_one(:assembla_service) }
+    it { is_expected.to have_one(:gemnasium_service) }
+    it { is_expected.to have_one(:buildkite_service) }
+    it { is_expected.to have_one(:bamboo_service) }
+    it { is_expected.to have_one(:teamcity_service) }
+    it { is_expected.to have_one(:jira_service) }
+    it { is_expected.to have_one(:redmine_service) }
+    it { is_expected.to have_one(:custom_issue_tracker_service) }
+    it { is_expected.to have_one(:bugzilla_service) }
+    it { is_expected.to have_one(:gitlab_issue_tracker_service) }
+    it { is_expected.to have_one(:external_wiki_service) }
+    it { is_expected.to have_one(:project_feature) }
+    it { is_expected.to have_one(:import_data).class_name('ProjectImportData')}
+>>>>>>> Use foreign keys with cascade delete to optimize project removal
     it { is_expected.to have_one(:last_event).class_name('Event') }
     it { is_expected.to have_one(:forked_from_project).through(:forked_project_link) }
     it { is_expected.to have_many(:commit_statuses) }
@@ -56,6 +88,7 @@ describe Project, models: true do
     it { is_expected.to have_many(:runners) }
     it { is_expected.to have_many(:variables) }
     it { is_expected.to have_many(:triggers) }
+<<<<<<< HEAD
     it { is_expected.to have_many(:labels).class_name('ProjectLabel').dependent(:destroy) }
     it { is_expected.to have_many(:users_star_projects).dependent(:destroy) }
     it { is_expected.to have_many(:environments).dependent(:destroy) }
@@ -65,6 +98,17 @@ describe Project, models: true do
     it { is_expected.to have_many(:lfs_objects_projects).dependent(:destroy) }
     it { is_expected.to have_many(:project_group_links).dependent(:destroy) }
     it { is_expected.to have_many(:notification_settings).dependent(:destroy) }
+=======
+    it { is_expected.to have_many(:labels) }
+    it { is_expected.to have_many(:users_star_projects) }
+    it { is_expected.to have_many(:environments) }
+    it { is_expected.to have_many(:deployments) }
+    it { is_expected.to have_many(:todos) }
+    it { is_expected.to have_many(:releases) }
+    it { is_expected.to have_many(:lfs_objects_projects) }
+    it { is_expected.to have_many(:project_group_links) }
+    it { is_expected.to have_many(:notification_settings).dependent(:delete_all) }
+>>>>>>> Use foreign keys with cascade delete to optimize project removal
     it { is_expected.to have_many(:forks).through(:forked_project_links) }
 
     context 'after initialized' do
