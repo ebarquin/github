@@ -1007,9 +1007,7 @@ class Project < ActiveRecord::Base
   # Thus it will automatically generate a new fragment
   # when the event is updated because the key changes.
   def reset_events_cache
-    Event.where(project_id: self.id).
-      order('id DESC').limit(100).
-      update_all(updated_at: Time.now)
+    Event.where(project_id: self.id).flush_redis_keys
   end
 
   def project_member(user)

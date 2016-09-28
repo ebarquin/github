@@ -635,9 +635,7 @@ class User < ActiveRecord::Base
   # Thus it will automatically generate a new fragment
   # when the event is updated because the key changes.
   def reset_events_cache
-    Event.where(author_id: self.id).
-      order('id DESC').limit(1000).
-      update_all(updated_at: Time.now)
+    Event.where(author_id: self.id).flush_redis_keys(1000)
   end
 
   def full_website_url

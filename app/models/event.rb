@@ -2,6 +2,8 @@ class Event < ActiveRecord::Base
   include Sortable
   default_scope { where.not(author_id: nil) }
 
+  CACHE_VERSION = 'v2.2'
+
   CREATED   = 1
   UPDATED   = 2
   CLOSED    = 3
@@ -42,10 +44,19 @@ class Event < ActiveRecord::Base
   scope :for_milestone_id, ->(milestone_id) { where(target_type: "Milestone", target_id: milestone_id) }
 
   class << self
+    # Flushes the Redis keys for the current events relation.
+    def flush_redis_keys(limit = 100)
+      events = select([:id, :updated_at]).reorder(id: :desc).limit(limit)
+      settings = Gitlab::CurrentSettings.current_application_settings
+
+      events.each do |event|
+        Rails.cache.delete([event, settings, CACHE_VERSION])
+      end
+    end
+
     def reset_event_cache_for(target)
       Event.where(target_id: target.id, target_type: target.class.to_s).
-        order('id DESC').limit(100).
-        update_all(updated_at: Time.now)
+        flush_redis_keys
     end
 
     def contributions

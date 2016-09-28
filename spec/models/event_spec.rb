@@ -184,6 +184,52 @@ describe Event, models: true do
     end
   end
 
+  describe '.flush_redis_keys' do
+    before do
+      Rails.cache.clear
+    end
+
+    after do
+      Rails.cache.clear
+    end
+
+    it 'flushes the Redis keys for the given collection' do
+      project = create(:empty_project)
+      note = create(:note, author: project.owner, project: project)
+      settings = Gitlab::CurrentSettings.current_application_settings
+
+      2.times do
+        event = create(:event,
+               project: project,
+               author: project.owner,
+               target_id: note.id,
+               target_type: 'Note')
+
+        Rails.cache.fetch([event, settings, Event::CACHE_VERSION]) { 'foo' }
+      end
+
+      collection = Event.all
+
+      collection.flush_redis_keys
+
+      collection.each do |event|
+        expect(Rails.cache.fetch([event, settings, Event::CACHE_VERSION])).
+          to be_nil
+      end
+    end
+  end
+
+  describe '.reset_event_cache_for' do
+    it 'flushes the cache keys for a given target' do
+      project = create(:empty_project)
+      note = create(:note, author: project.owner, project: project)
+
+      expect(described_class).to receive(:flush_redis_keys)
+
+      described_class.reset_event_cache_for(note)
+    end
+  end
+
   def create_event(project, user, attrs = {})
     data = {
       before: Gitlab::Git::BLANK_SHA,

@@ -1,5 +1,7 @@
 module Gitlab
   module CurrentSettings
+    module_function
+
     def current_application_settings
       if RequestStore.active?
         RequestStore.fetch(:current_application_settings) { ensure_application_settings! }

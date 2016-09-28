@@ -3,7 +3,7 @@
     .event-item-timestamp
       #{time_ago_with_tooltip(event.created_at, skip_js: true)}
 
-    = cache [event, current_application_settings, "v2.2"] do
+    = cache [event, current_application_settings, Event::CACHE_VERSION] do
       = author_avatar(event, size: 40)
 
       - if event.created_project?
