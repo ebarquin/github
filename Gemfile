@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '5.0.0.1'
+gem 'rails', git: 'https://github.com/rails/rails.git', branch: '5-0-stable'
 gem 'rails-deprecated_sanitizer', '~> 1.0.3'
 
 # Responders respond_to and respond_with
@@ -311,7 +311,7 @@ group :development, :test do
   gem 'knapsack', '~> 1.11.0'
 
   gem 'activerecord_sane_schema_dumper', '~> 1.0'
-  gem 'rails-controller-testing', require: false
+  gem 'rails-controller-testing', git: 'https://github.com/rails/rails-controller-testing.git'
 end
 
 group :test do
