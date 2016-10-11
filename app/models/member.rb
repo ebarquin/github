@@ -65,6 +65,7 @@ class Member < ActiveRecord::Base
   after_create :post_create_hook, unless: [:pending?, :importing?]
   after_update :post_update_hook, unless: [:pending?, :importing?]
   after_destroy :post_destroy_hook, unless: :pending?
+  after_destroy :refresh_member_authorized_projects
 
   delegate :name, :username, :email, to: :user, prefix: true
 
@@ -112,6 +113,8 @@ class Member < ActiveRecord::Base
       else
         member.save
       end
+
+      AuthorizedProjectsWorker.perform_async(user.id) if user.is_a?(User)
 
       member
     end
@@ -187,7 +190,10 @@ class Member < ActiveRecord::Base
 
     saved = self.save
 
-    after_accept_invite if saved
+    if saved
+      after_accept_invite
+      AuthorizedProjectsWorker.perform_async(user.id)
+    end
 
     saved
   end
@@ -248,6 +254,15 @@ class Member < ActiveRecord::Base
 
   def post_destroy_hook
     system_hook_service.execute_hooks_for(self, :destroy)
+  end
+
+  def refresh_member_authorized_projects
+    # If user/source is being destroyed, project access are gonna be destroyed eventually
+    # because of DB foreign keys, so we shouldn't bother with refreshing after each
+    # member is destroyed through association
+    return if destroyed_by_association.present?
+
+    AuthorizedProjectsWorker.perform_async(user_id)
   end
 
   def after_accept_invite

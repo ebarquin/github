@@ -5,6 +5,7 @@ class Group < Namespace
   include Gitlab::VisibilityLevel
   include AccessRequestable
   include Referable
+  include SelectForProjectAuthorization
 
   has_many :group_members, -> { where(requested_at: nil) }, dependent: :destroy, as: :source
   alias_method :members, :group_members
@@ -175,5 +176,9 @@ class Group < Namespace
 
   def system_hook_service
     SystemHooksService.new
+  end
+
+  def refresh_members_authorized_projects
+    Sidekiq::Client.push_bulk('class' => AuthorizedProjectsWorker, 'args' => users.select(:id).map { |row| [row.id] })
   end
 end
