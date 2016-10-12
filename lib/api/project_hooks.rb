@@ -18,7 +18,7 @@ module API
     end
 
     before { authenticate! }
-    before { authorize_admin_project }
+    after_validation { authorize_admin_project }
 
     params do
       requires :id, type: String, desc: 'The ID of a project'
