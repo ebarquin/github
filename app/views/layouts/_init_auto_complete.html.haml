@@ -3,6 +3,5 @@
 
 - if project
   :javascript
-    GitLab.GfmAutoComplete.dataSource = "#{autocomplete_sources_namespace_project_path(project.namespace, project, type: noteable_type, type_id: params[:id])}"
-    GitLab.GfmAutoComplete.cachedData = undefined;
-    GitLab.GfmAutoComplete.setup();
+    gl.GfmAutoComplete.dataSource = "#{autocomplete_sources_namespace_project_path(project.namespace, project, type: noteable_type, type_id: params[:id])}"
+    gl.GfmAutoComplete.setup();

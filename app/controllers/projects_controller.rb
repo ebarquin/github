@@ -128,35 +128,49 @@ class ProjectsController < Projects::ApplicationController
   end
 
   def autocomplete_sources
-    noteable =
-      case params[:type]
-      when 'Issue'
-        IssuesFinder.new(current_user, project_id: @project.id).
-          execute.find_by(iid: params[:type_id])
-      when 'MergeRequest'
-        MergeRequestsFinder.new(current_user, project_id: @project.id).
-          execute.find_by(iid: params[:type_id])
-      when 'Commit'
-        @project.commit(params[:type_id])
+    suggestion =
+      case params[:at_type]
+      when 'members'
+        ::Projects::ParticipantsService.new(@project, current_user).execute(noteable_by_type)
+      when 'emojis'
+        Gitlab::AwardEmoji.urls
       else
-        nil
+        autocomplete_service_data
       end
 
-    autocomplete = ::Projects::AutocompleteService.new(@project, current_user)
-    participants = ::Projects::ParticipantsService.new(@project, current_user).execute(noteable)
-
-    @suggestions = {
-      emojis: Gitlab::AwardEmoji.urls,
-      issues: autocomplete.issues,
-      milestones: autocomplete.milestones,
-      mergerequests: autocomplete.merge_requests,
-      labels: autocomplete.labels,
-      members: participants,
-      commands: autocomplete.commands(noteable, params[:type])
-    }
-
     respond_to do |format|
-      format.json { render json: @suggestions }
+      format.json { render json: suggestion }
+    end
+  end
+
+  def autocomplete_service_data
+    autocomplete = ::Projects::AutocompleteService.new(@project, current_user)
+    case params[:at_type]
+    when 'issues'
+      autocomplete.issues
+    when 'mergeRequests'
+      autocomplete.merge_requests
+    when 'labels'
+      autocomplete.labels
+    when 'milestones'
+      autocomplete.milestones
+    when 'commands'
+      autocomplete.commands(noteable_by_type, params[:type])
+    end
+  end
+
+  def noteable_by_type
+    case params[:type]
+    when 'Issue'
+      IssuesFinder.new(current_user, project_id: @project.id).
+        execute.find_by(iid: params[:type_id])
+    when 'MergeRequest'
+      MergeRequestsFinder.new(current_user, project_id: @project.id).
+        execute.find_by(iid: params[:type_id])
+    when 'Commit'
+      @project.commit(params[:type_id])
+    else
+      nil
     end
   end
 
