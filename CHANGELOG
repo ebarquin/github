@@ -8,6 +8,7 @@ v 8.13.0 (unreleased)
   - Use gitlab-shell v3.6.2 (GIT TRACE logging)
   - Add `/projects/visible` API endpoint (Ben Boeckel)
   - Fix centering of custom header logos (Ashley Dumaine)
+  - Fix guest access to public builds !6842
   - ExpireBuildArtifactsWorker query builds table without ordering enqueuing one job per build to cleanup
   - Add an example for testing a phoenix application with Gitlab CI in the docs (Manthan Mallikarjun)
   - Updating verbiage on git basics to be more intuitive

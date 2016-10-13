@@ -269,10 +269,22 @@ describe "Private Project Access", feature: true  do
     it { is_expected.to be_allowed_for master }
     it { is_expected.to be_allowed_for developer }
     it { is_expected.to be_allowed_for reporter }
-    it { is_expected.to be_denied_for guest }
     it { is_expected.to be_denied_for :user }
     it { is_expected.to be_denied_for :external }
     it { is_expected.to be_denied_for :visitor }
+
+    context 'when public builds is enabled' do
+      it { is_expected.to be_allowed_for guest }
+    end
+
+    context 'when public buils are disabled' do
+      before do
+        project.public_builds = false
+        project.save
+      end
+
+      it { is_expected.to be_denied_for guest }
+    end
   end
 
   describe "GET /:project_path/pipelines/:id" do
@@ -284,10 +296,22 @@ describe "Private Project Access", feature: true  do
     it { is_expected.to be_allowed_for master }
     it { is_expected.to be_allowed_for developer }
     it { is_expected.to be_allowed_for reporter }
-    it { is_expected.to be_denied_for guest }
     it { is_expected.to be_denied_for :user }
     it { is_expected.to be_denied_for :external }
     it { is_expected.to be_denied_for :visitor }
+
+    context 'when public builds is enabled' do
+      it { is_expected.to be_allowed_for guest }
+    end
+
+    context 'when public buils are disabled' do
+      before do
+        project.public_builds = false
+        project.save
+      end
+
+      it { is_expected.to be_denied_for guest }
+    end
   end
 
   describe "GET /:project_path/builds" do
@@ -298,10 +322,22 @@ describe "Private Project Access", feature: true  do
     it { is_expected.to be_allowed_for master }
     it { is_expected.to be_allowed_for developer }
     it { is_expected.to be_allowed_for reporter }
-    it { is_expected.to be_denied_for guest }
     it { is_expected.to be_denied_for :user }
     it { is_expected.to be_denied_for :external }
     it { is_expected.to be_denied_for :visitor }
+
+    context 'when public builds is enabled' do
+      it { is_expected.to be_allowed_for guest }
+    end
+
+    context 'when public buils are disabled' do
+      before do
+        project.public_builds = false
+        project.save
+      end
+
+      it { is_expected.to be_denied_for guest }
+    end
   end
 
   describe "GET /:project_path/builds/:id" do
@@ -314,10 +350,22 @@ describe "Private Project Access", feature: true  do
     it { is_expected.to be_allowed_for master }
     it { is_expected.to be_allowed_for developer }
     it { is_expected.to be_allowed_for reporter }
-    it { is_expected.to be_denied_for guest }
     it { is_expected.to be_denied_for :user }
     it { is_expected.to be_denied_for :external }
     it { is_expected.to be_denied_for :visitor }
+
+    context 'when public builds is enabled' do
+      it { is_expected.to be_allowed_for guest }
+    end
+
+    context 'when public buils are disabled' do
+      before do
+        project.public_builds = false
+        project.save
+      end
+
+      it { is_expected.to be_denied_for guest }
+    end
   end
 
   describe "GET /:project_path/environments" do
