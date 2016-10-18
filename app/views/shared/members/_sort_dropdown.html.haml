@@ -1,0 +1,13 @@
+- @sort ||= sort_value_last_joined
+
+.dropdown.inline
+  - toggle_text = member_sort_options_hash[@sort]
+  = dropdown_toggle(toggle_text, { toggle: 'dropdown' }, { id: 'sort-members-dropdown' })
+  %ul.dropdown-menu.dropdown-menu-align-right.dropdown-menu-selectable
+    %li.dropdown-header
+      Sort by
+    - member_sort_options_hash.each do |value, title|
+      %li
+        / need to change this so that it selects memeber project path
+        = link_to filter_projects_path(sort: value), class: ("is-active" if @sort == value) do
+          = title

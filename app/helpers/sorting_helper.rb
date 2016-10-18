@@ -35,6 +35,20 @@ module SortingHelper
     options
   end
 
+  def member_sort_options_hash
+    options = {
+      sort_value_last_joined => sort_title_last_joined,
+      sort_value_oldest_joined => sort_title_oldest_joined,
+      sort_value_name => sort_title_name_asc,
+      sort_value_name_desc => sort_title_name_desc,
+      sort_value_recently_signin => sort_title_recently_signin,
+      sort_value_oldest_signin => sort_title_oldest_signin,
+
+    }
+
+    options
+  end
+
   def sort_title_priority
     'Priority'
   end
@@ -93,6 +107,34 @@ module SortingHelper
 
   def sort_title_upvotes
     'Most popular'
+  end
+
+  def sort_title_last_joined
+    'Last joined'
+  end
+
+  def sort_title_oldest_joined
+    'Oldest joined'
+  end
+
+  def sort_title_name_asc
+    'Name, ascending'
+  end
+
+  def sort_title_name_desc
+    'Name, descending'
+  end
+
+  def sort_value_last_joined
+    'last_joined'
+  end
+
+  def sort_value_oldest_joined
+    'oldest_joined'
+  end
+
+  def sort_value_name_desc
+    'name_desc'
   end
 
   def sort_value_priority

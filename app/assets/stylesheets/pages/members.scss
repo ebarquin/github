@@ -70,8 +70,17 @@
 .member-search-form {
   position: relative;
 
-  @media (min-width: $screen-sm-min) {
-    float: right;
+  @media (min-width: $screen-sm-min) { float: right; }
+
+  .dropdown {
+    width: 100%;
+    margin-top: 5px;
+
+    .dropdown-menu-toggle {
+      width: 100%;
+    }
+
+    @media (min-width: $screen-sm-min) { top: 2.4px; width: 155px; }
   }
 
   .form-control {
@@ -81,18 +90,38 @@
     @media (min-width: $screen-sm-min) {
       width: 350px;
     }
-  }
-}
 
-.member-search-btn {
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 35px;
-  padding-left: 10px;
-  padding-right: 10px;
-  color: $gray-darkest;
-  background: transparent;
-  border: 0;
-  outline: 0;
+    &.input-short {
+      /* Medium devices (desktops, 992px and up) */
+      @media (min-width: $screen-md-min) { width: 170px; }
+
+      /* Large devices (large desktops, 1200px and up) */
+      @media (min-width: $screen-lg-min) { width: 210px; }
+    }
+  }
+
+  &.group-member {
+    .member-search-btn {
+      right: 4px;
+
+      @media (min-width: $screen-sm-min) {
+        right: 160px;
+        top: 8px;
+      }
+    }
+  }
+
+  .member-search-btn {
+    position: absolute;
+    right: 20px;
+    top: 0;
+    height: 35px;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: $gray-darkest;
+    background: transparent;
+    border: 0;
+    outline: 0;
+  }
+
 }
