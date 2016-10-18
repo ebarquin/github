@@ -21,7 +21,7 @@ class Import::GogsController < Import::BaseController
 
   def personal_access_token
     session[:gogs_access_token] = params[:personal_access_token]
-		session[:gogs_host_url] = params[:gogs_host_url]
+    session[:gogs_host_url] = params[:gogs_host_url]
     redirect_to status_import_gogs_url
   end
 
@@ -64,14 +64,14 @@ class Import::GogsController < Import::BaseController
 
   def gogs_auth
     if session[:gogs_access_token].blank? || session[:gogs_host_url].blank?
-      #go_to_github_for_permissions
-			Rails.logger.debug "Failure"
+      # go_to_github_for_permissions
+      Rails.logger.debug "Failure"
     end
   end
 
   def go_to_gogs_for_permissions
-    #redirect_to client.authorize_url(callback_import_github_url)
-		Rails.logger.debug "Failure"
+    # redirect_to client.authorize_url(callback_import_github_url)
+    Rails.logger.debug "Failure"
   end
 
   def gogs_unauthorized

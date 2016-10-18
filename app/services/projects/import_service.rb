@@ -5,7 +5,7 @@ module Projects
     class Error < StandardError; end
 
     ALLOWED_TYPES = [
-			'gogs',
+      'gogs',
       'bitbucket',
       'fogbugz',
       'gitlab',

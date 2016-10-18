@@ -237,9 +237,9 @@ class ApplicationController < ActionController::Base
     current_application_settings.import_sources.include?('github')
   end
 
-	def gogs_import_enabled?
-		true
-	end
+  def gogs_import_enabled?
+    true
+  end
 
   def github_import_configured?
     Gitlab::OAuth::Provider.enabled?(:github)
