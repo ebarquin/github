@@ -14,6 +14,19 @@ module ExploreHelper
     path
   end
 
+  def filter_group_member_path(options = {})
+    exist_opts = {
+      sort: params[:sort],
+      utf8: params[:utf8],
+      search: params[:search],
+    }
+
+    options = exist_opts.merge(options)
+    path = request.path
+    path << "?#{options.to_param}"
+    path
+  end
+
   def explore_controller?
     controller.class.name.split("::").first == "Explore"
   end

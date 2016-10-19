@@ -9,5 +9,5 @@
     - member_sort_options_hash.each do |value, title|
       %li
         / need to change this so that it selects memeber project path
-        = link_to filter_projects_path(sort: value), class: ("is-active" if @sort == value) do
+        = link_to filter_group_member_path(sort: value), class: ("is-active" if @sort == value) do
           = title
