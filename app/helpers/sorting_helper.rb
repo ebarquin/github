@@ -36,7 +36,7 @@ module SortingHelper
   end
 
   def member_sort_options_hash
-    options = {
+    {
       sort_value_last_joined => sort_title_last_joined,
       sort_value_oldest_joined => sort_title_oldest_joined,
       sort_value_name => sort_title_name_asc,
@@ -45,8 +45,6 @@ module SortingHelper
       sort_value_oldest_signin => sort_title_oldest_signin,
 
     }
-
-    options
   end
 
   def sort_title_priority
