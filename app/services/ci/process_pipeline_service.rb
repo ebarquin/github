@@ -6,16 +6,12 @@ module Ci
       @pipeline = pipeline
 
       # This method will ensure that our pipeline does have all builds for all stages created
-      if created_builds.empty?
-        create_builds!
-      end
+      create_builds! if created_builds.empty?
 
-      new_builds =
-        stage_indexes_of_created_builds.map do |index|
-          process_stage(index)
-        end
+      new_builds = enqueue_builds!
 
-      @pipeline.update_status
+      pipeline.update_status
+      pipeline.touch
 
       new_builds.flatten.any?
     end
@@ -24,6 +20,16 @@ module Ci
 
     def create_builds!
       Ci::CreatePipelineBuildsService.new(project, current_user).execute(pipeline)
+    end
+
+    def enqueue_builds!
+      stage_indexes_of_created_builds.map do |index|
+        process_stage(index)
+      end
+    end
+
+    def stage_indexes_of_created_builds
+      created_builds.order(:stage_idx).pluck('distinct stage_idx')
     end
 
     def process_stage(index)
@@ -63,10 +69,6 @@ module Ci
 
     def status_for_prior_stages(index)
       pipeline.builds.where('stage_idx < ?', index).latest.status || 'success'
-    end
-
-    def stage_indexes_of_created_builds
-      created_builds.order(:stage_idx).pluck('distinct stage_idx')
     end
 
     def created_builds_in_stage(index)
