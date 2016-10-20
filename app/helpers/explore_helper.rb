@@ -16,9 +16,9 @@ module ExploreHelper
 
   def filter_group_member_path(options = {})
     exist_opts = {
-      sort: params[:sort],
-      utf8: params[:utf8],
+      utf8: params[:utf8] ||= '✓',
       search: params[:search],
+      sort: params[:sort],
     }
 
     options = exist_opts.merge(options)
