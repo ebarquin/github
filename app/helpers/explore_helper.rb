@@ -14,7 +14,7 @@ module ExploreHelper
     path
   end
 
-  def filter_group_member_path(options = {})
+  def filter_group_project_member_path(options = {})
     exist_opts = {
       utf8: params[:utf8] ||= '✓',
       search: params[:search],
