@@ -11,7 +11,6 @@ class Projects::ProjectMembersController < Projects::ApplicationController
     @project_members = @project_members.non_invite unless can?(current_user, :admin_project, @project)
 
     if params[:search].present?
-
       @project_members = @project_members.joins(:user).merge(User.sort(@sort = params[:sort]))
       @group_links = @project.project_group_links.where(group_id: @project.invited_groups.search(params[:search]).select(:id))
     end
