@@ -11,13 +11,16 @@ class Projects::ProjectMembersController < Projects::ApplicationController
     @project_members = @project_members.non_invite unless can?(current_user, :admin_project, @project)
 
     if params[:search].present?
-      users = @project.users.search(params[:search]).to_a
-      @project_members = @project_members.where(user_id: users)
 
+      @project_members = @project_members.joins(:user).merge(User.sort(@sort = params[:sort]))
       @group_links = @project.project_group_links.where(group_id: @project.invited_groups.search(params[:search]).select(:id))
     end
 
-    @project_members = @project_members.order(access_level: :desc).page(params[:page])
+    if params[:sort].present?
+      @project_members = @project_members.joins(:user).merge(User.sort(@sort = params[:sort]))
+    end
+
+    @project_members = @project_members.page(params[:page])
 
     @requesters = AccessRequestsFinder.new(@project).execute(current_user)
 
