@@ -237,7 +237,7 @@
           this.diffsLoaded = true;
           this.scrollToElement("#diffs");
 
-          new Diff();
+          new gl.Diff();
         }
       });
     }
