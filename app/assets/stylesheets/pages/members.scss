@@ -70,7 +70,9 @@
 .member-search-form {
   position: relative;
 
-  @media (min-width: $screen-sm-min) { float: right; }
+  @media (min-width: $screen-sm-min) {
+    float: right;
+  }
 
   .dropdown {
     width: 100%;
@@ -80,7 +82,10 @@
       width: 100%;
     }
 
-    @media (min-width: $screen-sm-min) { top: 2.4px; width: 155px; }
+    @media (min-width: $screen-sm-min) {
+      top: 2.4px;
+      width: 155px;
+    }
   }
 
   .form-control {
@@ -93,10 +98,14 @@
 
     &.input-short {
       /* Medium devices (desktops, 992px and up) */
-      @media (min-width: $screen-md-min) { width: 170px; }
+      @media (min-width: $screen-md-min) {
+        width: 170px;
+      }
 
       /* Large devices (large desktops, 1200px and up) */
-      @media (min-width: $screen-lg-min) { width: 210px; }
+      @media (min-width: $screen-lg-min) {
+        width: 210px;
+      }
     }
   }
 
