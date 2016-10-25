@@ -97,12 +97,10 @@
     }
 
     &.input-short {
-      /* Medium devices (desktops, 992px and up) */
       @media (min-width: $screen-md-min) {
         width: 170px;
       }
 
-      /* Large devices (large desktops, 1200px and up) */
       @media (min-width: $screen-lg-min) {
         width: 210px;
       }
