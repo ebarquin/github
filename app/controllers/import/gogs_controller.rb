@@ -7,16 +7,9 @@ class Import::GogsController < Import::BaseController
   helper_method :logged_in_with_gogs?
 
   def new
-    if logged_in_with_gogs?
-      go_to_gogs_for_permissions
-    elsif session[:gogs_access_token]
+    if session[:gogs_access_token]
       redirect_to status_import_gogs_url
     end
-  end
-
-  def callback
-    session[:gogs_access_token] = client.get_token(params[:code])
-    redirect_to status_import_gogs_url
   end
 
   def personal_access_token
@@ -27,14 +20,14 @@ class Import::GogsController < Import::BaseController
 
   def status
     @repos = client.repos
-    @already_added_projects = current_user.created_projects.where(import_type: "gogs")
+    @already_added_projects = current_user.created_projects.where(import_type: "github")
     already_added_projects_names = @already_added_projects.pluck(:import_source)
 
     @repos.reject!{ |repo| already_added_projects_names.include? repo.full_name }
   end
 
   def jobs
-    jobs = current_user.created_projects.where(import_type: "gogs").to_json(only: [:id, :import_status])
+    jobs = current_user.created_projects.where(import_type: "github").to_json(only: [:id, :import_status])
     render json: jobs
   end
 
@@ -55,7 +48,7 @@ class Import::GogsController < Import::BaseController
   private
 
   def client
-    @client ||= Gitlab::GithubImport::Client.new(session[:gogs_access_token])
+    @client ||= Gitlab::GithubImport::Client.new(session[:gogs_access_token], host: session[:gogs_host_url], api_version: 'v1')
   end
 
   def verify_gogs_import_enabled
@@ -69,22 +62,13 @@ class Import::GogsController < Import::BaseController
     end
   end
 
-  def go_to_gogs_for_permissions
-    # redirect_to client.authorize_url(callback_import_github_url)
-    Rails.logger.debug "Failure"
-  end
-
   def gogs_unauthorized
     session[:gogs_access_token] = nil
     redirect_to new_import_gogs_url,
       alert: 'Access denied to your Gogs account.'
   end
 
-  def logged_in_with_gogs?
-    current_user.identities.exists?(provider: 'gogs')
-  end
-
   def access_params
-    { gogs_access_token: session[:gogs_access_token] }
+    { github_access_token: session[:gogs_access_token] }
   end
 end

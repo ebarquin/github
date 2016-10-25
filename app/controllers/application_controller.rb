@@ -238,7 +238,7 @@ class ApplicationController < ActionController::Base
   end
 
   def gogs_import_enabled?
-    true
+    current_application_settings.import_sources.include?('gogs')
   end
 
   def github_import_configured?

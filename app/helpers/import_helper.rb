@@ -30,9 +30,8 @@ module ImportHelper
   end
 
   def gogs_root_url
-    return @gogs_url if defined?(@github_url)
+    return @gogs_url if defined?(@gogs_url)
 
-    provider = Gitlab.config.omniauth.providers.find { |p| p.name == 'gogs' }
-    @gogs_url = provider.fetch('url', 'https://try.gogs.io') if provider
+    @gogs_url = session[:gogs_host_url] if session[:gogs_host_url]
   end
 end

@@ -4,41 +4,13 @@
 %h3.page-title
   = icon 'github', text: 'Import Projects from Gogs'
 
-- if gogs_import_enabled?
-  %p
-    To import a Gogs project, you first need to authorize GitLab to access
-    the list of your Gogs repositories:
-
-  = link_to 'List Your Gogs Repositories', status_import_gogs_path, class: 'btn btn-success'
-
-  %hr
-
 %p
-  - if gogs_import_enabled?
-    Alternatively,
-  - else
-    To import a Gogs project,
-  you can use a
+  To import a Gogs project, you can use a
   = succeed '.' do
     = link_to 'Personal Access Token', 'https://github.com/settings/tokens'
-  When you create your Personal Access Token,
-  you will need to select the <code>repo</code> scope, so we can display a
-  list of your public and private repositories which are available for import.
 
 = form_tag personal_access_token_import_gogs_path, method: :post, class: 'form-inline' do
   .form-group
     = text_field_tag :personal_access_token, '', class: 'form-control', placeholder: "Personal Access Token", size: 40
     = text_field_tag :gogs_host_url, '', class: 'form-control', placeholder: "Gogs Host URL", size: 128
     = submit_tag 'List Your Gogs Repositories', class: 'btn btn-success'
-
-- unless gogs_import_enabled?
-  %hr
-  %p
-    Note:
-    - if current_user.admin?
-      As an administrator you may like to configure
-    - else
-      Consider asking your GitLab administrator to configure
-    = link_to 'Gogs integration', help_page_path("integration/github")
-    which will allow login via Gogs and allow importing projects without
-    generating a Personal Access Token.

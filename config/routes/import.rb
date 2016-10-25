@@ -9,7 +9,6 @@ namespace :import do
   resource :gogs, only: [:create, :new], controller: :gogs do
     post :personal_access_token
     get :status
-    get :callback
     get :jobs
   end
 
