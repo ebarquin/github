@@ -20,14 +20,14 @@ class Import::GogsController < Import::BaseController
 
   def status
     @repos = client.repos
-    @already_added_projects = current_user.created_projects.where(import_type: "github")
+    @already_added_projects = current_user.created_projects.where(import_type: "gogs")
     already_added_projects_names = @already_added_projects.pluck(:import_source)
 
     @repos.reject!{ |repo| already_added_projects_names.include? repo.full_name }
   end
 
   def jobs
-    jobs = current_user.created_projects.where(import_type: "github").to_json(only: [:id, :import_status])
+    jobs = current_user.created_projects.where(import_type: "gogs").to_json(only: [:id, :import_status])
     render json: jobs
   end
 
@@ -39,7 +39,7 @@ class Import::GogsController < Import::BaseController
     @target_namespace = find_or_create_namespace(namespace_path, current_user.namespace_path)
 
     if current_user.can?(:create_projects, @target_namespace)
-      @project = Gitlab::GithubImport::ProjectCreator.new(repo, @project_name, @target_namespace, current_user, access_params).execute
+      @project = Gitlab::GithubImport::ProjectCreator.new(repo, @project_name, @target_namespace, current_user, access_params, type: 'gogs').execute
     else
       render 'unauthorized'
     end
@@ -57,8 +57,8 @@ class Import::GogsController < Import::BaseController
 
   def gogs_auth
     if session[:gogs_access_token].blank? || session[:gogs_host_url].blank?
-      # go_to_github_for_permissions
-      Rails.logger.debug "Failure"
+      redirect_to new_import_gogs_url,
+        alert: 'You need to specify both an Access Token and a Host URL.'
     end
   end
 
