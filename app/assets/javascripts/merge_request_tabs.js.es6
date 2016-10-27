@@ -1,11 +1,14 @@
-/* eslint-disable */
+/* eslint-disable no-new, no-param-reassign, class-methods-use-this */
+/* global Breakpoints, Cookies, DiffNotesApp */
+
+/*= require js.cookie */
+/*= require breakpoints */
+
+/* eslint-disable max-len */
 // MergeRequestTabs
 //
 // Handles persisting and restoring the current tab selection and lazily-loading
 // content on the MergeRequests#show page.
-//
-/*= require js.cookie */
-
 //
 // ### Example Markup
 //
@@ -45,11 +48,15 @@
 //     </div>
 //   </div>
 //
+/* eslint-enable max-len */
+
 ((global) => {
+  // Store the `location` object, allowing for easier stubbing in tests
+  let location = window.location;
 
   class MergeRequestTabs {
 
-    constructor({ action, setUrl, buildsLoaded } = {}) {
+    constructor({ action, setUrl, buildsLoaded, stubLocation } = {}) {
       this.diffsLoaded = false;
       this.buildsLoaded = false;
       this.pipelinesLoaded = false;
@@ -63,8 +70,10 @@
       this.tabShown = this.tabShown.bind(this);
       this.showTab = this.showTab.bind(this);
 
-      // Store the `location` object, allowing for easier stubbing in tests
-      this._location = window.location;
+      if (stubLocation) {
+        location = stubLocation;
+      }
+
       this.bindEvents();
       this.activateTab(action);
       this.initAffix();
@@ -97,15 +106,15 @@
         this.resetViewContainer();
       } else if (this.isDiffAction(action)) {
         this.loadDiff($target.attr('href'));
-        if ((typeof bp !== "undefined" && bp !== null) && bp.getBreakpointSize() !== 'lg') {
+        if (Breakpoints.get().getBreakpointSize() !== 'lg') {
           this.shrinkView();
         }
         if (this.diffViewType() === 'parallel') {
           this.expandViewContainer();
         }
         const navBarHeight = $('.navbar-gitlab').outerHeight();
-        $.scrollTo(".merge-request-details .merge-request-tabs", {
-          offset: -navBarHeight
+        $.scrollTo('.merge-request-details .merge-request-tabs', {
+          offset: -navBarHeight,
         });
       } else if (action === 'builds') {
         this.loadBuilds($target.attr('href'));
@@ -125,13 +134,12 @@
     }
 
     scrollToElement(container) {
-      if (window.location.hash) {
+      if (location.hash) {
         const navBarHeight = $('.navbar-gitlab').outerHeight() + $('.layout-nav').outerHeight() + document.querySelector('.js-tabs-affix').offsetHeight;
-        const navBarHeight = $('.navbar-gitlab').outerHeight() + $('.layout-nav').outerHeight();
-        const $el = $(`${container} ${window.location.hash}:not(.match)`);
+        const $el = $(`${container} ${location.hash}:not(.match)`);
         if ($el.length) {
           $.scrollTo($el[0], {
-            offset: -navBarHeight
+            offset: -navBarHeight,
           });
         }
       }
@@ -139,10 +147,8 @@
 
     // Activate a tab based on the current action
     activateTab(action) {
-      if (action === 'show') {
-        action = 'notes';
-      }
-      $(`.merge-request-tabs a[data-action='${action}']`).tab('show').trigger('shown.bs.tab');
+      const activate = action === 'show' ? 'notes' : action;
+      $(`.merge-request-tabs a[data-action='${activate}']`).tab('show').trigger('shown.bs.tab');
     }
 
     // Replaces the current Merge Request-specific action in the URL with a new one
@@ -166,33 +172,29 @@
     //
     // Returns the new URL String
     setCurrentAction(action) {
-      // Normalize action, just to be safe
-      if (action === 'show') {
-        action = 'notes';
-      }
-      this.currentAction = action;
+      this.currentAction = action === 'show' ? 'notes' : action;
 
       // Remove a trailing '/commits' '/diffs' '/builds' '/pipelines' '/new' '/new/diffs'
-      let new_state = this._location.pathname.replace(/\/(commits|diffs|builds|pipelines|new|new\/diffs)(\.html)?\/?$/, '');
+      let newState = location.pathname.replace(/\/(commits|diffs|builds|pipelines|new|new\/diffs)(\.html)?\/?$/, '');
 
       // Append the new action if we're on a tab other than 'notes'
-      if (action !== 'notes') {
-        new_state += `/${action}`;
+      if (this.currentAction !== 'notes') {
+        newState += `/${this.currentAction}`;
       }
 
       // Ensure parameters and hash come along for the ride
-      new_state += this._location.search + this._location.hash;
+      newState += location.search + location.hash;
 
       // Replace the current history state with the new one without breaking
       // Turbolinks' history.
       //
       // See https://github.com/rails/turbolinks/issues/363
-      history.replaceState({
+      window.history.replaceState({
         turbolinks: true,
-        url: new_state
-      }, document.title, new_state);
+        url: newState,
+      }, document.title, newState);
 
-      return new_state;
+      return newState;
     }
 
     loadCommits(source) {
@@ -202,11 +204,11 @@
       this.ajaxGet({
         url: `${source}.json`,
         success: (data) => {
-          document.querySelector("div#commits").innerHTML = data.html;
+          document.querySelector('div#commits').innerHTML = data.html;
           gl.utils.localTimeAgo($('.js-timeago', 'div#commits'));
           this.commitsLoaded = true;
-          this.scrollToElement("#commits");
-        }
+          this.scrollToElement('#commits');
+        },
       });
     }
 
@@ -220,7 +222,7 @@
       const url = gl.utils.parseUrl(source);
 
       this.ajaxGet({
-        url: `${url.pathname}.json${this._location.search}`,
+        url: `${url.pathname}.json${location.search}`,
         success: (data) => {
           $('#diffs').html(data.html);
 
@@ -231,14 +233,14 @@
           gl.utils.localTimeAgo($('.js-timeago', 'div#diffs'));
           $('#diffs .js-syntax-highlight').syntaxHighlight();
 
-          if (this.diffViewType() === 'parallel' && this.isDiffAction(this.currentAction) ) {
+          if (this.diffViewType() === 'parallel' && this.isDiffAction(this.currentAction)) {
             this.expandViewContainer();
           }
           this.diffsLoaded = true;
-          this.scrollToElement("#diffs");
+          this.scrollToElement('#diffs');
 
           new gl.Diff();
-        }
+        },
       });
     }
 
@@ -249,12 +251,12 @@
       this.ajaxGet({
         url: `${source}.json`,
         success: (data) => {
-          document.querySelector("div#builds").innerHTML = data.html;
+          document.querySelector('div#builds').innerHTML = data.html;
           gl.utils.localTimeAgo($('.js-timeago', 'div#builds'));
           this.buildsLoaded = true;
           new gl.Pipelines();
-          this.scrollToElement("#builds");
-        }
+          this.scrollToElement('#builds');
+        },
       });
     }
 
@@ -268,8 +270,8 @@
           $('#pipelines').html(data.html);
           gl.utils.localTimeAgo($('.js-timeago', '#pipelines'));
           this.pipelinesLoaded = true;
-          this.scrollToElement("#pipelines");
-        }
+          this.scrollToElement('#pipelines');
+        },
       });
     }
 
@@ -285,10 +287,9 @@
         beforeSend: () => this.toggleLoading(true),
         complete: () => this.toggleLoading(false),
         dataType: 'json',
-        type: 'GET'
+        type: 'GET',
       };
-      options = $.extend({}, defaults, options);
-      $.ajax(options);
+      $.ajax($.extend({}, defaults, options));
     }
 
     diffViewType() {
@@ -296,7 +297,7 @@
     }
 
     isDiffAction(action) {
-      return action === 'diffs' || action === 'new/diffs'
+      return action === 'diffs' || action === 'new/diffs';
     }
 
     expandViewContainer() {
@@ -354,11 +355,13 @@
       const $layoutNav = $('.layout-nav');
 
       $tabs.off('affix.bs.affix affix-top.bs.affix')
-        .affix({ offset: {
-          top: () => (
-            $diffTabs.offset().top - $tabs.height() - $fixedNav.height() - $layoutNav.height()
-          )
-        }})
+        .affix({
+          offset: {
+            top: () => (
+              $diffTabs.offset().top - $tabs.height() - $fixedNav.height() - $layoutNav.height()
+            ),
+          },
+        })
         .on('affix.bs.affix', () => $diffTabs.css({ marginTop: $tabs.height() }))
         .on('affix-top.bs.affix', () => $diffTabs.css({ marginTop: '' }));
 
@@ -370,5 +373,4 @@
   }
 
   global.MergeRequestTabs = MergeRequestTabs;
-
 })(window.gl || (window.gl = {}));
