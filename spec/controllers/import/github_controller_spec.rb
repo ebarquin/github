@@ -153,30 +153,27 @@ describe Import::GithubController do
       end
 
       context "when a namespace with the GitHub user's username already exists" do
-        let!(:existing_namespace) { create(:namespace, name: other_username, owner: user) }
+        let!(:existing_namespace) { create(:group, name: other_username) }
 
         context "when the namespace is owned by the GitLab user" do
+          before { existing_namespace.add_owner(user) }
+
           it "takes the existing namespace" do
             expect(Gitlab::GithubImport::ProjectCreator).
               to receive(:new).with(github_repo, github_repo.name, existing_namespace, user, access_params).
                 and_return(double(execute: true))
 
-            post :create, format: :js
+            post :create, target_namespace: existing_namespace.name, format: :js
           end
         end
 
         context "when the namespace is not owned by the GitLab user" do
-          before do
-            existing_namespace.owner = create(:user)
-            existing_namespace.save
-          end
-
           it "creates a project using user's namespace" do
             expect(Gitlab::GithubImport::ProjectCreator).
               to receive(:new).with(github_repo, github_repo.name, user.namespace, user, access_params).
                 and_return(double(execute: true))
 
-            post :create, format: :js
+            post :create, target_namespace: existing_namespace.name, format: :js
           end
         end
       end

@@ -31,6 +31,7 @@ Please view this file on the master branch, on stable branches it's out of date.
   - Shortened merge request modal to let clipboard button not overlap
 
 ## 8.13.2
+  - Fix import behavior on conflicting namespaces
   - Fix builds dropdown overlapping bug !7124
 
 ## 8.13.1 (2016-10-25)
