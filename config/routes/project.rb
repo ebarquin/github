@@ -15,10 +15,18 @@ resources :namespaces, path: '/', constraints: { id: /[a-zA-Z.0-9_\-]+/ }, only:
       post :remove_export
       post :generate_new_export
       get :download_export
-      get :autocomplete_sources
+      # get :autocomplete_sources
       get :activity
       get :refs
     end
+
+    get '/autocomplete_sources/emojis', to: 'autocomplete_sources#emojis', as: 'autocomplete_sources_emojis'
+    get '/autocomplete_sources/members', to: 'autocomplete_sources#members', as: 'autocomplete_sources_members'
+    get '/autocomplete_sources/issues', to: 'autocomplete_sources#issues', as: 'autocomplete_sources_issues'
+    get '/autocomplete_sources/merge_requests', to: 'autocomplete_sources#merge_requests', as: 'autocomplete_sources_merge_requests'
+    get '/autocomplete_sources/labels', to: 'autocomplete_sources#labels', as: 'autocomplete_sources_labels'
+    get '/autocomplete_sources/milestones', to: 'autocomplete_sources#milestones', as: 'autocomplete_sources_milestones'
+    get '/autocomplete_sources/commands', to: 'autocomplete_sources#commands', as: 'autocomplete_sources_commands'
 
     scope module: :projects do
       scope constraints: { id: /.+\.git/, format: nil } do

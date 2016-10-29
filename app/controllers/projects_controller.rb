@@ -127,53 +127,6 @@ class ProjectsController < Projects::ApplicationController
     redirect_to edit_project_path(@project), alert: ex.message
   end
 
-  def autocomplete_sources
-    suggestion =
-      case params[:at_type]
-      when 'members'
-        ::Projects::ParticipantsService.new(@project, current_user).execute(noteable_by_type)
-      when 'emojis'
-        Gitlab::AwardEmoji.urls
-      else
-        autocomplete_service_data
-      end
-
-    respond_to do |format|
-      format.json { render json: suggestion }
-    end
-  end
-
-  def autocomplete_service_data
-    autocomplete = ::Projects::AutocompleteService.new(@project, current_user)
-    case params[:at_type]
-    when 'issues'
-      autocomplete.issues
-    when 'mergeRequests'
-      autocomplete.merge_requests
-    when 'labels'
-      autocomplete.labels
-    when 'milestones'
-      autocomplete.milestones
-    when 'commands'
-      autocomplete.commands(noteable_by_type, params[:type])
-    end
-  end
-
-  def noteable_by_type
-    case params[:type]
-    when 'Issue'
-      IssuesFinder.new(current_user, project_id: @project.id).
-        execute.find_by(iid: params[:type_id])
-    when 'MergeRequest'
-      MergeRequestsFinder.new(current_user, project_id: @project.id).
-        execute.find_by(iid: params[:type_id])
-    when 'Commit'
-      @project.commit(params[:type_id])
-    else
-      nil
-    end
-  end
-
   def archive
     return access_denied! unless can?(current_user, :archive_project, @project)
 

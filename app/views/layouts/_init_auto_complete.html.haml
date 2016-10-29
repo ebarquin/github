@@ -3,5 +3,14 @@
 
 - if project
   :javascript
-    gl.GfmAutoComplete.dataSource = "#{autocomplete_sources_namespace_project_path(project.namespace, project, type: noteable_type, type_id: params[:id])}"
+    gl.GfmAutoComplete.dataSources = {
+      emojis: "#{namespace_project_autocomplete_sources_emojis_path(project.namespace, project)}",
+      members: "#{namespace_project_autocomplete_sources_members_path(project.namespace, project, type: noteable_type, type_id: params[:id]))}",
+      issues: "#{namespace_project_autocomplete_sources_issues_path(project.namespace, project)}",
+      mergeRequests: "#{namespace_project_autocomplete_sources_merge_requests_path(project.namespace, project)}",
+      labels: "#{namespace_project_autocomplete_sources_labels_path(project.namespace, project)}",
+      milestones: "#{namespace_project_autocomplete_sources_milestones_path(project.namespace, project)}",
+      commands: "#{namespace_project_autocomplete_sources_commands_path(project.namespace, project, type: noteable_type, type_id: params[:id])}"
+    };
+
     gl.GfmAutoComplete.setup();
