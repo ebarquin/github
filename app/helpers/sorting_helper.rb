@@ -25,7 +25,7 @@ module SortingHelper
       sort_value_recently_updated => sort_title_recently_updated,
       sort_value_oldest_updated => sort_title_oldest_updated,
       sort_value_recently_created => sort_title_recently_created,
-      sort_value_oldest_created => sort_title_oldest_created,
+      sort_value_oldest_created => sort_title_oldest_created
     }
 
     if current_controller?('admin/projects')
@@ -42,8 +42,7 @@ module SortingHelper
       sort_value_name => sort_title_name_asc,
       sort_value_name_desc => sort_title_name_desc,
       sort_value_recently_signin => sort_title_recently_signin,
-      sort_value_oldest_signin => sort_title_oldest_signin,
-
+      sort_value_oldest_signin => sort_title_oldest_signin
     }
   end
 
