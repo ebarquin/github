@@ -22,7 +22,7 @@ class Namespace < ActiveRecord::Base
     length: { within: 1..255 },
     namespace: true,
     presence: true,
-    uniqueness: { case_sensitive: false }
+    uniqueness: { case_sensitive: false, scope: :parent_path }
 
   delegate :name, to: :owner, allow_nil: true, prefix: true
 
@@ -85,7 +85,7 @@ class Namespace < ActiveRecord::Base
   end
 
   def to_param
-    path
+    full_path
   end
 
   def human_name
@@ -145,6 +145,14 @@ class Namespace < ActiveRecord::Base
   def lfs_enabled?
     # User namespace will always default to the global setting
     Gitlab.config.lfs.enabled
+  end
+
+  def full_path
+    if parent_path
+      parent_path + '/' + path
+    else
+      path
+    end
   end
 
   private

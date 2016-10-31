@@ -79,9 +79,23 @@ Rails.application.routes.draw do
   draw :project
 
   # Get all keys of user
-  get ':username.keys' => 'profiles/keys#get_keys', constraints: { username: /.*/ }
+  get ':username.keys' => 'profiles/keys#get_keys', constraints: { username: Gitlab::Regex.namespace_route_regex }
 
   root to: "root#index"
+
+  # Since group show page is wildcard routing
+  # we want all other routing to be checked before matching this one
+  constraints(GroupUrlConstrainer.new) do
+    scope(path: '*id',
+          as: :group,
+          constraints: { id: Gitlab::Regex.namespace_route_regex, format: /(html|json|atom)/ },
+          controller: :groups) do
+      get '/', action: :show
+      patch '/', action: :update
+      put '/', action: :update
+      delete '/', action: :destroy
+    end
+  end
 
   get '*unmatched_route', to: 'application#not_found'
 end

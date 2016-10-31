@@ -36,27 +36,13 @@ scope do
     constraints: { id: /.+/, format: false },
     as: :blob_diff
   )
-  get(
-    '/blob/*id',
-    to: 'blob#show',
-    constraints: { id: /.+/, format: false },
-    as: :blob
-  )
-  delete(
-    '/blob/*id',
-    to: 'blob#destroy',
-    constraints: { id: /.+/, format: false }
-  )
-  put(
-    '/blob/*id',
-    to: 'blob#update',
-    constraints: { id: /.+/, format: false }
-  )
-  post(
-    '/blob/*id',
-    to: 'blob#create',
-    constraints: { id: /.+/, format: false }
-  )
+
+  scope('/blob/*id', as: :blob, controller: :blob, constraints: { id: /.+/, format: false }) do
+    get '/', action: :show
+    delete '/', action: :destroy
+    post '/', action: :create
+    put '/', action: :update
+  end
 
   get(
     '/raw/*id',

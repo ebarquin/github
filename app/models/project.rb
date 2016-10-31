@@ -321,21 +321,13 @@ class Project < ActiveRecord::Base
     #
     # Returns a Project, or nil if no project could be found.
     def find_with_namespace(path)
-      namespace_path, project_path = path.split('/', 2)
-
-      return unless namespace_path && project_path
-
-      namespace_path = connection.quote(namespace_path)
-      project_path = connection.quote(project_path)
+      return unless path.include?('/')
 
       # On MySQL we want to ensure the ORDER BY uses a case-sensitive match so
       # any literal matches come first, for this we have to use "BINARY".
       # Without this there's still no guarantee in what order MySQL will return
       # rows.
-      binary = Gitlab::Database.mysql? ? 'BINARY' : ''
-
-      order_sql = "(CASE WHEN #{binary} namespaces.path = #{namespace_path} " \
-        "AND #{binary} projects.path = #{project_path} THEN 0 ELSE 1 END)"
+      order_sql = "(CASE WHEN #{where_path_sql(path, binary: Gitlab::Database.mysql?)} THEN 0 ELSE 1 END)"
 
       where_paths_in([path]).reorder(order_sql).take
     end
@@ -366,24 +358,12 @@ class Project < ActiveRecord::Base
       cast_lower = Gitlab::Database.postgresql?
 
       paths.each do |path|
-        namespace_path, project_path = path.split('/', 2)
+        next unless path.include?('/')
 
-        next unless namespace_path && project_path
-
-        namespace_path = connection.quote(namespace_path)
-        project_path = connection.quote(project_path)
-
-        where = "(namespaces.path = #{namespace_path}
-          AND projects.path = #{project_path})"
+        where = "(#{where_path_sql(path)})"
 
         if cast_lower
-          where = "(
-            #{where}
-            OR (
-              LOWER(namespaces.path) = LOWER(#{namespace_path})
-              AND LOWER(projects.path) = LOWER(#{project_path})
-            )
-          )"
+          where = "(#{where} OR (#{where_path_sql(path, lower: true)}))"
         end
 
         wheres << where
@@ -426,6 +406,46 @@ class Project < ActiveRecord::Base
 
     def group_ids
       joins(:namespace).where(namespaces: { type: 'Group' }).select(:namespace_id)
+    end
+
+    private
+
+    def where_path_sql(path, lower: false, binary: false)
+      binary = binary ? 'BINARY' : ''
+      namespace_path, _, project_path = path.rpartition('/')
+      namespace_parent_path, _, namespace_path = namespace_path.rpartition('/')
+
+      if namespace_parent_path.present?
+        namespace_parent_path = connection.quote(namespace_parent_path)
+      else
+        namespace_parent_path = nil
+      end
+
+      namespace_path = connection.quote(namespace_path)
+      project_path = connection.quote(project_path)
+
+      params = {
+        'namespaces.path' => namespace_path,
+        'namespaces.parent_path' => namespace_parent_path,
+        'projects.path' => project_path
+      }
+
+      sql = []
+
+      params.each_with_index do |(column, value), i|
+        if value
+          if lower
+            column = "LOWER(#{column})"
+            value = "LOWER(#{value})"
+          end
+
+          sql << "#{binary} #{column} = #{value}"
+        else
+          sql << "#{binary} #{column} is NULL"
+        end
+      end
+
+      sql.join(' AND ')
     end
   end
 
@@ -851,7 +871,7 @@ class Project < ActiveRecord::Base
 
   def path_with_namespace
     if namespace
-      namespace.path + '/' + path
+      namespace.full_path + '/' + path
     else
       path
     end

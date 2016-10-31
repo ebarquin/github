@@ -107,7 +107,7 @@ module API
     end
 
     def find_group(id)
-      group = Group.find_by(path: id) || Group.find_by(id: id)
+      group = Group.find_by_full_path(id) || Group.find_by(id: id)
 
       if can?(current_user, :read_group, group)
         group

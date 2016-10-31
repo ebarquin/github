@@ -2,7 +2,9 @@ module Gitlab
   module Regex
     extend self
 
-    NAMESPACE_REGEX_STR = '(?:[a-zA-Z0-9_\.][a-zA-Z0-9_\-\.]*[a-zA-Z0-9_\-]|[a-zA-Z0-9_])(?<!\.git|\.atom)'.freeze
+    PATH_REGEX_STR = '[a-zA-Z0-9_\.][a-zA-Z0-9_\-\.]*'.freeze
+    NAMESPACE_REGEX_STR = "(?:#{PATH_REGEX_STR}[a-zA-Z0-9_\-]|[a-zA-Z0-9_])(?<!\.git|\.atom)".freeze
+    PROJECT_REGEX_STR = "#{PATH_REGEX_STR}(?<!\.git|\.atom)".freeze
 
     def namespace_regex
       @namespace_regex ||= /\A#{NAMESPACE_REGEX_STR}\z/.freeze
@@ -35,7 +37,15 @@ module Gitlab
     end
 
     def project_path_regex
-      @project_path_regex ||= /\A[a-zA-Z0-9_.][a-zA-Z0-9_\-\.]*(?<!\.git|\.atom)\z/.freeze
+      @project_path_regex ||= /\A#{PROJECT_REGEX_STR}\z/.freeze
+    end
+
+    def project_route_regex
+      @project_route_regex ||= /#{PROJECT_REGEX_STR}/.freeze
+    end
+
+    def project_git_route_regex
+      @project_route_git_regex ||= /#{PATH_REGEX_STR}\.git/.freeze
     end
 
     def project_path_regex_message

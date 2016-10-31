@@ -61,6 +61,13 @@ class Group < Namespace
     def visible_to_user(user)
       where(id: user.authorized_groups.select(:id).reorder(nil))
     end
+
+    def find_by_full_path(full_path)
+      parent_path, _, path = full_path.rpartition('/')
+      parent_path = nil if parent_path.blank?
+
+      Group.find_by(parent_path: parent_path, path: path)
+    end
   end
 
   def to_reference(_from_project = nil)
