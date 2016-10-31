@@ -17,9 +17,6 @@ module Gitlab
       end
 
       def api_endpoint
-        unless host.present? && api_version.present?
-          Rails.logger.debug "=====> FUUUUUCK"
-        end
         host.present? && api_version.present? ? "#{host}/api/#{api_version}" : github_options[:site]
       end
 

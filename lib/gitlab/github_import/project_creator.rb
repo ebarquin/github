@@ -30,7 +30,7 @@ module Gitlab
       private
 
       def import_url
-        repo.clone_url.sub('https://', "https://#{session_data[:github_access_token]}@")
+        repo.clone_url.sub('://', "://#{session_data[:github_access_token]}@")
       end
 
       def visibility_level
