@@ -254,3 +254,37 @@
 .content-block-small {
   padding: 10px 0;
 }
+
+.landing {
+  margin-bottom: $gl-padding;
+  overflow: hidden;
+
+  .dismiss-icon {
+    position: absolute;
+    right: $cycle-analytics-box-padding;
+    cursor: pointer;
+    color: #b2b2b2;
+    z-index: 1;
+  }
+
+  .svg-container {
+    text-align: center;
+  }
+
+  .inner-content {
+    @media (max-width: $screen-sm-min) {
+      padding: 0 28px;
+      text-align: center;
+    }
+
+    h4 {
+      color: $gl-text-color;
+      font-size: 17px;
+    }
+
+    p {
+      color: $cycle-analytics-box-text-color;
+      margin-bottom: $gl-padding;
+    }
+  }
+}

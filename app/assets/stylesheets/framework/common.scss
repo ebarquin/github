@@ -376,3 +376,8 @@ table {
 }
 
 .hide-bottom-border { border-bottom: none !important; }
+
+.bordered-box {
+  border: 1px solid $border-color;
+  border-radius: $border-radius-default;
+}
