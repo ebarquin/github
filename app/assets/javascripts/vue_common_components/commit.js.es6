@@ -97,7 +97,7 @@
        * TODO: Improve this!
        * @returns {String}
        */
-      userImageAlDescription() {
+      userImageAltDescription() {
         return this.author && this.author.username ? `${this.author.username}'s avatar` : null;
       },
     },
@@ -139,12 +139,12 @@
         </a>
 
         <p class="commit-title">
-          <span v-if='title'>
+          <span v-if='title && hasAuthor'>
             <!-- commit author info-->
             <a :href='author.web_url'>
               <img
                 class="avatar has-tooltip s20"
-                :alt='user_image_alt'
+                :alt='userImageAltDescription'
                 :title='author.username'
                 :src='author.author_avatar'/>
             </a>
