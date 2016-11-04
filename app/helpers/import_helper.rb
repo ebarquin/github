@@ -26,12 +26,6 @@ module ImportHelper
   end
 
   def gogs_project_url(path_with_namespace)
-    "#{gogs_root_url}/#{path_with_namespace}"
-  end
-
-  def gogs_root_url
-    return @gogs_url if defined?(@gogs_url)
-
-    @gogs_url = session[:gogs_host_url] if session[:gogs_host_url]
+    "#{@gogs_root_url}/#{path_with_namespace}"
   end
 end

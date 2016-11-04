@@ -25,7 +25,8 @@ module Gitlab
         import_milestones
         import_issues
         import_pull_requests
-        import_comments
+        import_comments(:issues)
+        import_comments(:pull_requests)
         import_wiki
         # import_releases
         handle_errors

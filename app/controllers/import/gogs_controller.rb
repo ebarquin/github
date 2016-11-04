@@ -23,6 +23,8 @@ class Import::GogsController < Import::BaseController
     @already_added_projects = current_user.created_projects.where(import_type: "gogs")
     already_added_projects_names = @already_added_projects.pluck(:import_source)
 
+    @gogs_root_url = session[:gogs_host_url]
+
     @repos.reject!{ |repo| already_added_projects_names.include? repo.full_name }
   end
 
