@@ -65,6 +65,10 @@ class Spinach::Features::ProjectIssues < Spinach::FeatureSteps
     page.has_link?('New Issue') ? click_link('New Issue') : click_link('New issue')
   end
 
+  step 'I click link "New _issue"' do
+    click_link "New issue"
+  end
+
   step 'I click "author" dropdown' do
     page.find('.js-author-search').click
     sleep 1
