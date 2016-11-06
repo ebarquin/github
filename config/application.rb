@@ -99,6 +99,7 @@ module Gitlab
     config.assets.precompile << "lib/utils/*.js"
     config.assets.precompile << "lib/*.js"
     config.assets.precompile << "u2f.js"
+    config.assets.precompile << "vue_common_components/*.js.es6"
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'

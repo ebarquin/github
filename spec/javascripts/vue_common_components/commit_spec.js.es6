@@ -1,9 +1,34 @@
-//= require vue
-/*= require ./vue_common_components/commit */
+/*= require vue_common_components/commit */
+/* eslint-disable */
 
 describe('Commit component', () => {
+  const getRenderedText = (Component, propsData) => {
+    const Constructor = Vue.extend(Component);
+    const vm = new Constructor({propsData}).$mount();    
+    return vm.$el.textContent;
+  };
+  
+  const MyComponent = window.gl.commitComponent;
+
   describe('When `ref` is provided', () => {
+    const props = {
+      tag: true,
+      ref: {
+        name: 'master',
+        ref_url: 'http://localhost/namespace2/gitlabhq/tree/master'
+      },
+      commit_url: 'https://gitlab.com/gitlab-org/gitlab-ce/commit/b7836eddf62d663c665769e1b0960197fd215067',
+      short_sha: 'b7836edd',
+      title: 'Commit message',
+      author: {
+        avatar_url: 'https://gitlab.com/uploads/user/avatar/300478/avatar.png',
+        web_url: 'https://gitlab.com/jschatz1',
+        username: 'jschatz1'
+      }
+    };
+
     it('should render a tag icon if it represents a tag', () => {
+      const renderedText = getRenderedText(MyComponent, props);
 
     });
 

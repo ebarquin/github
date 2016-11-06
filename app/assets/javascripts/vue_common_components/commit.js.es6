@@ -1,5 +1,5 @@
-//= require vue
-
+/*= require vue
+/* global Vue*/
 (() => {
   window.gl = window.gl || {};
 
@@ -117,7 +117,7 @@
       document.querySelector('.branch-commit .commit-icon-container').innerHtml = commitIconSVG;
     },
 
-    template: `
+    render: `
       <div class="branch-commit">
         <div v-if='hasRef'>
           <div class="icon-container">
