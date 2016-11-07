@@ -71,13 +71,6 @@ describe API::API, api: true  do
         expect(json_response.last).to have_key('web_url')
       end
 
-      it "adds pagination headers and keep query params" do
-        get api("/issues?state=closed&per_page=3", user)
-        expect(response.headers['Link']).to eq(
-          '<http://www.example.com/api/v3/issues?page=1&per_page=3&private_token=%s&state=closed>; rel="first", <http://www.example.com/api/v3/issues?page=1&per_page=3&private_token=%s&state=closed>; rel="last"' % [user.private_token, user.private_token]
-        )
-      end
-
       it 'returns an array of closed issues' do
         get api('/issues?state=closed', user)
         expect(response).to have_http_status(200)
@@ -630,9 +623,8 @@ describe API::API, api: true  do
       post api("/projects/#{project.id}/issues", user),
         title: 'new issue', confidential: 'foo'
 
-      expect(response).to have_http_status(201)
-      expect(json_response['title']).to eq('new issue')
-      expect(json_response['confidential']).to be_falsy
+      expect(response).to have_http_status(400)
+      expect(json_response['error']).to eq('confidential is invalid')
     end
 
     it "sends notifications for subscribers of newly added labels" do
@@ -809,8 +801,8 @@ describe API::API, api: true  do
         put api("/projects/#{project.id}/issues/#{confidential_issue.id}", user),
           confidential: 'foo'
 
-        expect(response).to have_http_status(200)
-        expect(json_response['confidential']).to be_truthy
+        expect(response).to have_http_status(400)
+        expect(json_response['error']).to eq('confidential is invalid')
       end
     end
   end
