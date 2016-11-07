@@ -27,7 +27,7 @@
         })(this),
         success: function(data) {
           Pager.append(data.count, data.html);
-          return Pager.callback();
+          return Pager.callback(data);
         },
         dataType: "json"
       });
