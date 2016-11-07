@@ -52,4 +52,8 @@ module GroupsHelper
   def group_issues
     Issue.where(project: @group.projects)
   end
+
+  def group_milestones
+    Milestone.where(project: @group.projects)
+  end
 end
