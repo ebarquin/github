@@ -72,7 +72,8 @@ module HasStatus
     scope :canceled, -> { where(status: 'canceled')  }
     scope :skipped, -> { where(status: 'skipped')  }
     scope :running_or_pending, -> { where(status: [:running, :pending]) }
-    scope :finished, -> { where(status: [:success, :failed, :canceled]) }
+    scope :finished, -> { where(status: [:success, :failed, :canceled, :skipped]) }
+    scope :unfinished, -> { where(status: [:created, :running, :pending]) }
   end
 
   def started?
