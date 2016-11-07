@@ -75,7 +75,7 @@
 }
 
 @mixin btn-orange {
-  @include btn-color($orange-light, $border-orange-light, $orange-normal, $border-orange-normal, $orange-dark, $border-orange-dark, #fff);
+  @include btn-color($orange-light, $border-orange-light, $orange-normal, $border-orange-normal, $orange-darker, $border-orange-darker, #fff);
 }
 
 @mixin btn-red {
