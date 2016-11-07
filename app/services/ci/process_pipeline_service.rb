@@ -8,12 +8,9 @@ module Ci
       # This method will ensure that our pipeline does have all builds for all stages created
       create_builds! if created_builds.empty?
 
-      new_builds = enqueue_builds!
-
-      pipeline.update_status
-      pipeline.touch
-
-      new_builds.flatten.any?
+      enqueue_builds!.flatten.any?.tap do
+        pipeline.update_status
+      end
     end
 
     private
