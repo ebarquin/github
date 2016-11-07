@@ -52,4 +52,8 @@ module GroupsHelper
   def group_issues(group)
     IssuesFinder.new(current_user, group_id: group.id).execute
   end
+
+  def group_merge_requests(group)
+    MergeRequestsFinder.new(current_user, project_id: group.projects).execute
+  end
 end

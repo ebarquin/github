@@ -263,6 +263,14 @@ module SharedProject
     @project.update(public_builds: false)
   end
 
+  step 'project "Shop" have "Bugfix MR" open merge request' do
+    create(:merge_request, title: "Bugfix MR", target_project: project, source_project: project, author: project.users.first)
+  end
+
+  step 'I click link "New _merge request"' do
+    click_link "New merge request"
+  end
+
   def user_owns_project(user_name:, project_name:, visibility: :private)
     user = user_exists(user_name, username: user_name.gsub(/\s/, '').underscore)
     project = Project.find_by(name: project_name)

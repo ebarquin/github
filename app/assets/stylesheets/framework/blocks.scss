@@ -277,4 +277,10 @@
   @media(max-width: $screen-xs-max) {
     margin-top: 0;
   }
+
+  @media(min-width: $screen-xs-max) {
+    &.merge-requests .text-content {
+      margin-top: 40px;
+    }
+  }
 }

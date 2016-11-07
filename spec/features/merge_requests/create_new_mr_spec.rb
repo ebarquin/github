@@ -13,7 +13,7 @@ feature 'Create New Merge Request', feature: true, js: true do
   it 'generates a diff for an orphaned branch' do
     visit namespace_project_merge_requests_path(project.namespace, project)
 
-    click_link 'New Merge Request'
+    click_link 'New merge request'
     expect(page).to have_content('Source branch')
     expect(page).to have_content('Target branch')
 

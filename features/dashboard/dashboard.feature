@@ -62,7 +62,8 @@ Feature: Dashboard
 
   @javascript
   Scenario: Visiting Project's merge requests after sorting
-    Given I visit dashboard merge requests page
+    Given project "Shop" have "Bugfix MR" open merge request
+    And I visit dashboard merge requests page
     And I sort the list by "Oldest updated"
     And I visit project "Shop" merge requests page
     Then The list should be sorted by "Oldest updated"

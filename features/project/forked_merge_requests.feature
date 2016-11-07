@@ -7,7 +7,7 @@ Feature: Project Forked Merge Requests
   @javascript
   Scenario: I submit new unassigned merge request to a forked project
     Given I visit project "Forked Shop" merge requests page
-    And I click link "New Merge Request"
+    And I click link "New _merge request"
     And I fill out a "Merge Request On Forked Project" merge request
     And I submit the merge request
     Then I should see merge request "Merge Request On Forked Project"
@@ -29,14 +29,14 @@ Feature: Project Forked Merge Requests
 
   Scenario: I cannot submit an invalid merge request
     Given I visit project "Forked Shop" merge requests page
-    And I click link "New Merge Request"
+    And I click link "New _merge request"
     And I fill out an invalid "Merge Request On Forked Project" merge request
     Then I should see validation errors
 
   @javascript
   Scenario: Merge request should target fork repository by default
     Given I visit project "Forked Shop" merge requests page
-    And I click link "New Merge Request"
+    And I click link "New _merge request"
     Then the target repository should be the original repository
 
   @javascript
@@ -45,7 +45,7 @@ Feature: Project Forked Merge Requests
     And I sign in as an admin
     And I have a project forked off of "Shop" called "Forked Shop"
     Then I visit project "Forked Shop" merge requests page
-    And I click link "New Merge Request"
+    And I click link "New _merge request"
     And I fill out a "Merge Request On Forked Project" merge request
     When I click "Assign to" dropdown"
     Then I should see the target project ID in the input selector

@@ -7,6 +7,7 @@ describe "Search", feature: true  do
   let(:project) { create(:project, namespace: user.namespace) }
   let!(:issue) { create(:issue, project: project, assignee: user) }
   let!(:issue2) { create(:issue, project: project, author: user) }
+  let!(:merge_request) { create(:merge_request, source_project: project, target_project: project, author: user) }
 
   before do
     login_with(user)

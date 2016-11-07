@@ -23,7 +23,7 @@ Feature: Project Fork
     Then I should see "New merge request"
     And I goto the Merge Requests page
     Then I should see "New merge request"
-    And I click link "New merge request"
+    And I click link "New _merge request"
     Then I should see the new merge request page for my namespace
 
   Scenario: Viewing forks of a Project
