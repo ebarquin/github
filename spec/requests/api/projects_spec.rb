@@ -415,16 +415,7 @@ describe API::API, api: true  do
         not_to change { Project.count }
 
       expect(response).to have_http_status(400)
-      expect(json_response['message']['name']).to eq([
-        'can\'t be blank',
-        'is too short (minimum is 0 characters)',
-        Gitlab::Regex.project_name_regex_message
-      ])
-      expect(json_response['message']['path']).to eq([
-        'can\'t be blank',
-        'is too short (minimum is 0 characters)',
-        Gitlab::Regex.send(:project_path_regex_message)
-      ])
+      expect(json_response['error']).to eq('name is missing')
     end
 
     it 'assigns attributes to project' do
@@ -447,6 +438,8 @@ describe API::API, api: true  do
     it 'sets a project as public' do
       project = attributes_for(:project, :public)
       post api("/projects/user/#{user.id}", admin), project
+
+      expect(response).to have_http_status(201)
       expect(json_response['public']).to be_truthy
       expect(json_response['visibility_level']).to eq(Gitlab::VisibilityLevel::PUBLIC)
     end
@@ -454,6 +447,8 @@ describe API::API, api: true  do
     it 'sets a project as public using :public' do
       project = attributes_for(:project, { public: true })
       post api("/projects/user/#{user.id}", admin), project
+
+      expect(response).to have_http_status(201)
       expect(json_response['public']).to be_truthy
       expect(json_response['visibility_level']).to eq(Gitlab::VisibilityLevel::PUBLIC)
     end
@@ -461,6 +456,8 @@ describe API::API, api: true  do
     it 'sets a project as internal' do
       project = attributes_for(:project, :internal)
       post api("/projects/user/#{user.id}", admin), project
+
+      expect(response).to have_http_status(201)
       expect(json_response['public']).to be_falsey
       expect(json_response['visibility_level']).to eq(Gitlab::VisibilityLevel::INTERNAL)
     end
@@ -468,6 +465,8 @@ describe API::API, api: true  do
     it 'sets a project as internal overriding :public' do
       project = attributes_for(:project, :internal, { public: true })
       post api("/projects/user/#{user.id}", admin), project
+
+      expect(response).to have_http_status(201)
       expect(json_response['public']).to be_falsey
       expect(json_response['visibility_level']).to eq(Gitlab::VisibilityLevel::INTERNAL)
     end
@@ -520,7 +519,6 @@ describe API::API, api: true  do
 
     it "uploads the file and returns its info" do
       post api("/projects/#{project.id}/uploads", user), file: fixture_file_upload(Rails.root + "spec/fixtures/dk.png", "image/png")
-
       expect(response).to have_http_status(201)
       expect(json_response['alt']).to eq("dk")
       expect(json_response['url']).to start_with("/uploads/")
@@ -599,7 +597,10 @@ describe API::API, api: true  do
       dot_user = create(:user, username: 'dot.user')
       project = create(:project, creator_id: dot_user.id, namespace: dot_user.namespace)
 
+      pp "#{dot_user.namespace.name}%2F#{project.path}"
+
       get api("/projects/#{dot_user.namespace.name}%2F#{project.path}", dot_user)
+      pp json_response
       expect(response).to have_http_status(200)
       expect(json_response['name']).to eq(project.name)
     end
@@ -848,7 +849,7 @@ describe API::API, api: true  do
         it 'is idempotent if not forked' do
           expect(project_fork_target.forked_from_project).to be_nil
           delete api("/projects/#{project_fork_target.id}/fork", admin)
-          expect(response).to have_http_status(200)
+          expect(response).to have_http_status(304)
           expect(project_fork_target.reload.forked_from_project).to be_nil
         end
       end
@@ -865,7 +866,7 @@ describe API::API, api: true  do
         post api("/projects/#{project.id}/share", user), group_id: group.id, group_access: Gitlab::Access::DEVELOPER, expires_at: expires_at
       end.to change { ProjectGroupLink.count }.by(1)
 
-      expect(response.status).to eq 201
+      expect(response).to have_http_status(201)
       expect(json_response['group_id']).to eq(group.id)
       expect(json_response['group_access']).to eq(Gitlab::Access::DEVELOPER)
       expect(json_response['expires_at']).to eq(expires_at.to_s)
@@ -873,18 +874,18 @@ describe API::API, api: true  do
 
     it "returns a 400 error when group id is not given" do
       post api("/projects/#{project.id}/share", user), group_access: Gitlab::Access::DEVELOPER
-      expect(response.status).to eq 400
+      expect(response).to have_http_status(400)
     end
 
     it "returns a 400 error when access level is not given" do
       post api("/projects/#{project.id}/share", user), group_id: group.id
-      expect(response.status).to eq 400
+      expect(response).to have_http_status(400)
     end
 
     it "returns a 400 error when sharing is disabled" do
       project.namespace.update(share_with_group_lock: true)
       post api("/projects/#{project.id}/share", user), group_id: group.id, group_access: Gitlab::Access::DEVELOPER
-      expect(response.status).to eq 400
+      expect(response).to have_http_status(400)
     end
 
     it 'returns a 404 error when user cannot read group' do
@@ -892,19 +893,20 @@ describe API::API, api: true  do
 
       post api("/projects/#{project.id}/share", user), group_id: private_group.id, group_access: Gitlab::Access::DEVELOPER
 
-      expect(response.status).to eq 404
+      expect(response).to have_http_status(404)
     end
 
     it 'returns a 404 error when group does not exist' do
       post api("/projects/#{project.id}/share", user), group_id: 1234, group_access: Gitlab::Access::DEVELOPER
 
-      expect(response.status).to eq 404
+      expect(response).to have_http_status(404)
     end
 
-    it "returns a 409 error when wrong params passed" do
+    it "returns a 400 error when wrong params passed" do
       post api("/projects/#{project.id}/share", user), group_id: group.id, group_access: 1234
-      expect(response.status).to eq 409
-      expect(json_response['message']).to eq 'Group access is not included in the list'
+
+      expect(response).to have_http_status(400)
+      expect(json_response['error']).to eq 'group_access does not have a valid value'
     end
   end
 
@@ -987,10 +989,11 @@ describe API::API, api: true  do
 
       it 'updates visibility_level from public to private' do
         project3.update_attributes({ visibility_level: Gitlab::VisibilityLevel::PUBLIC })
-
         project_param = { public: false }
+
         put api("/projects/#{project3.id}", user), project_param
         expect(response).to have_http_status(200)
+
         project_param.each_pair do |k, v|
           expect(json_response[k.to_s]).to eq(v)
         end
