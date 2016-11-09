@@ -15,13 +15,17 @@ class ProjectCacheWorker
   end
 
   # Overwrite Sidekiq's implementation so we only schedule when actually needed.
-  def self.perform_async(project_id)
+  def self.perform_async(project_id, refresh = [])
     # If a lease for this project is still being held there's no point in
     # scheduling a new job.
     super unless lease_for(project_id).exists?
   end
 
-  def perform(project_id)
+  # project_id - The ID of the project for which to flush the cache.
+  # refresh - An Array containing extra types of data to refresh such as
+  #           `:readme` to flush the README and `:changelog` to flush the
+  #           CHANGELOG.
+  def perform(project_id, refresh = [])
     if try_obtain_lease_for(project_id)
       Rails.logger.
         info("Obtained ProjectCacheWorker lease for project #{project_id}")
@@ -32,10 +36,10 @@ class ProjectCacheWorker
       return
     end
 
-    update_caches(project_id)
+    update_caches(project_id, refresh)
   end
 
-  def update_caches(project_id)
+  def update_caches(project_id, refresh = [])
     project = Project.find(project_id)
 
     return unless project.repository.exists?
@@ -43,9 +47,7 @@ class ProjectCacheWorker
     project.update_repository_size
     project.update_commit_count
 
-    if project.repository.root_ref
-      project.repository.build_cache
-    end
+    project.repository.refresh_method_caches(refresh)
   end
 
   def try_obtain_lease_for(project_id)

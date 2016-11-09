@@ -27,27 +27,14 @@ describe GitPushService, services: true do
 
       it { is_expected.to be_truthy }
 
-      it 'flushes general cached data' do
-        expect(project.repository).to receive(:expire_cache).
-          with('master', newrev)
+      it 'calls the after_push_commit hook' do
+        expect(project.repository).to receive(:after_push_commit).with('master')
 
         subject
       end
 
-      it 'flushes the visible content cache' do
-        expect(project.repository).to receive(:expire_has_visible_content_cache)
-
-        subject
-      end
-
-      it 'flushes the branches cache' do
-        expect(project.repository).to receive(:expire_branches_cache)
-
-        subject
-      end
-
-      it 'flushes the branch count cache' do
-        expect(project.repository).to receive(:expire_branch_count_cache)
+      it 'calls the after_create_branch hook' do
+        expect(project.repository).to receive(:after_create_branch)
 
         subject
       end
@@ -56,21 +43,8 @@ describe GitPushService, services: true do
     context 'existing branch' do
       it { is_expected.to be_truthy }
 
-      it 'flushes general cached data' do
-        expect(project.repository).to receive(:expire_cache).
-          with('master', newrev)
-
-        subject
-      end
-
-      it 'does not flush the branches cache' do
-        expect(project.repository).not_to receive(:expire_branches_cache)
-
-        subject
-      end
-
-      it 'does not flush the branch count cache' do
-        expect(project.repository).not_to receive(:expire_branch_count_cache)
+      it 'calls the after_push_commit hook' do
+        expect(project.repository).to receive(:after_push_commit).with('master')
 
         subject
       end
@@ -81,27 +55,14 @@ describe GitPushService, services: true do
 
       it { is_expected.to be_truthy }
 
-      it 'flushes the visible content cache' do
-        expect(project.repository).to receive(:expire_has_visible_content_cache)
+      it 'calls the after_push_commit hook' do
+        expect(project.repository).to receive(:after_push_commit).with('master')
 
         subject
       end
 
-      it 'flushes the branches cache' do
-        expect(project.repository).to receive(:expire_branches_cache)
-
-        subject
-      end
-
-      it 'flushes the branch count cache' do
-        expect(project.repository).to receive(:expire_branch_count_cache)
-
-        subject
-      end
-
-      it 'flushes general cached data' do
-        expect(project.repository).to receive(:expire_cache).
-          with('master', newrev)
+      it 'calls the after_remove_branch hook' do
+        expect(project.repository).to receive(:after_remove_branch)
 
         subject
       end
