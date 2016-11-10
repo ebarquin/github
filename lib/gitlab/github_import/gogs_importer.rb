@@ -1,3 +1,5 @@
+require 'uri'
+
 module Gitlab
   module GogsImport
     class Importer < Gitlab::GithubImport::Importer
@@ -13,7 +15,8 @@ module Gitlab
         @labels   = {}
 
         if credentials
-          host = project.import_url.gsub(/[a-zA-Z0-9-]*\/[a-zA-Z0-9-]*\.git/, '').gsub(/[a-f0-9]*@/, '')
+          uri = URI.parse(project.import_url)
+          host = "#{uri.scheme}://#{url.host}#{uri.path}".gsub(/[\w-]+\/[\w-]+\.git/, '')
           @client = GithubImport::Client.new(credentials[:user], host: host, api_version: 'v1')
         else
           raise Projects::ImportService::Error, "Unable to find project import data credentials for project ID: #{@project.id}"
