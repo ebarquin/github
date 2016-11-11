@@ -1,6 +1,6 @@
 module Gitlab
   module GogsImport
-    class MilestoneFormatter < BaseFormatter
+    class MilestoneFormatter < GithubImport::MilestoneFormatter
       def self.iid_attr
         :id
       end
