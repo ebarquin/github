@@ -180,14 +180,10 @@ describe API::API, api: true do
       let(:build) { create(:ci_build, :artifacts, pipeline: pipeline) }
 
       context 'authorized user' do
-        let(:download_headers) do
-          { 'Content-Transfer-Encoding' => 'binary',
-            'Content-Disposition' => 'attachment; filename=ci_build_artifacts.zip' }
-        end
-
         it 'returns specific build artifacts' do
           expect(response).to have_http_status(200)
-          expect(response.headers).to include(download_headers)
+          expect(response.headers['Content-Transfer-Encoding']).to eq('binary')
+          expect(response.headers['Content-Disposition']).to eq('attachment; filename=ci_build_artifacts.zip')
         end
       end
 
@@ -265,14 +261,9 @@ describe API::API, api: true do
 
     context 'find proper build' do
       shared_examples 'a valid file' do
-        let(:download_headers) do
-          { 'Content-Transfer-Encoding' => 'binary',
-            'Content-Disposition' =>
-              "attachment; filename=#{build.artifacts_file.filename}" }
-        end
-
         it { expect(response).to have_http_status(200) }
-        it { expect(response.headers).to include(download_headers) }
+        it { expect(response.headers['Content-Transfer-Encoding']).to eq('binary') }
+        it { expect(response.headers['Content-Disposition']).to eq("attachment; filename=#{build.artifacts_file.filename}") }
       end
 
       context 'with regular branch' do
