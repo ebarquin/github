@@ -7,6 +7,7 @@
       this.prioritizedLabels = prioritizedLabels || $('.js-prioritized-labels');
       this.otherLabels = otherLabels || $('.js-other-labels');
       this.errorMessage = 'Unable to update label prioritization at this time';
+      this.emptyState = document.querySelector('#js-priority-labels-empty-state');
       this.prioritizedLabels.sortable({
         items: 'li',
         placeholder: 'list-placeholder',
@@ -28,7 +29,12 @@
       const action = $btn.parents('.js-prioritized-labels').length ? 'remove' : 'add';
       const $tooltip = $(`#${$btn.find('.has-tooltip:visible').attr('aria-describedby')}`);
       $tooltip.tooltip('destroy');
-      return _this.toggleLabelPriority($label, action);
+      _this.toggleLabelPriority($label, action);
+      _this.toggleEmptyState($label, $btn, action)
+    }
+
+    toggleEmptyState($label, $btn, action) {
+      this.emptyState.classList.toggle('hidden', !!$('> li', this.prioritizedLabels).length);
     }
 
     toggleLabelPriority($label, action, persistState) {
@@ -104,4 +110,3 @@
   gl.LabelManager = LabelManager;
 
 })(window.gl || (window.gl = {}));
-
