@@ -1,0 +1,14 @@
+- button_path = local_assigns.fetch(:button_path, false)
+
+.row.empty-state.wikis
+  .pull-right.col-xs-12.col-sm-6
+    .svg-content
+      = render 'shared/empty_states/icons/wikis.svg'
+  .col-xs-12.col-sm-6
+    .text-content
+      %h4
+        The Wiki lets you write documentation for your project. This documentation is called a wiki.
+      %p
+        Whereas a README is about presenting the project, a wiki is where you should store all the details about it: Why you’ve created it, its core principles, how to use it and so on.
+      - if button_path
+        = link_to 'Create your first page', button_path, class: 'btn btn-new', title: 'Create your first page', id: 'new_wiki_page_link'
