@@ -9,7 +9,7 @@ require 'spec_helper'
 # user_calendar_activities   GET    /u/:username/calendar_activities(.:format)
 describe UsersController, "routing" do
   it "to #show" do
-    allow(User).to receive(:find_by).and_return(true)
+    allow_any_instance_of(UserUrlConstrainer).to receive(:matches?).and_return(true)
 
     expect(get("/User")).to route_to('users#show', username: 'User')
   end
@@ -195,6 +195,8 @@ describe Profiles::KeysController, "routing" do
 
   # get all the ssh-keys of a user
   it "to #get_keys" do
+    allow_any_instance_of(UserUrlConstrainer).to receive(:matches?).and_return(true)
+
     expect(get("/foo.keys")).to route_to('profiles/keys#get_keys', username: 'foo')
   end
 end
@@ -261,20 +263,22 @@ describe "Authentication", "routing" do
 end
 
 describe "Groups", "routing" do
+  before { allow_any_instance_of(GroupUrlConstrainer).to receive(:matches?).and_return(true) }
+
   it "to #show" do
     expect(get("/groups/1")).to route_to('groups#show', id: '1')
   end
 
   it "also display group#show on the short path" do
-    allow(Group).to receive(:find_by).and_return(true)
-
     expect(get('/1')).to route_to('groups#show', id: '1')
   end
 
   it "also display group#show with dot in the path" do
-    allow(Group).to receive(:find_by).and_return(true)
-
     expect(get('/group.with.dot')).to route_to('groups#show', id: 'group.with.dot')
+  end
+
+  it "also display group#show with slash in the path" do
+    expect(get('/group/subgroup')).to route_to('groups#show', id: 'group/subgroup')
   end
 end
 
