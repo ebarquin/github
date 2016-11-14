@@ -543,6 +543,32 @@ describe SystemNoteService, services: true do
 
     before { stub_jira_urls(jira_issue.id) }
 
+    noteable_types = ["merge_requests", "commit"]
+
+    noteable_types.each do |type|
+      context "when noteable is a #{type}" do
+        it "blocks cross reference notes for #{type.underscore.pluralize}" do
+          jira_tracker.public_send("#{type}_events=", false)
+          jira_tracker.save
+
+          noteable = type == "commit" ? commit : mergereq
+          result = described_class.cross_reference(jira_issue, noteable, author)
+
+          expect(result).to eq("Events for #{noteable.class.to_s.underscore.humanize.pluralize.downcase} are disabled.")
+        end
+
+        it "allows cross reference notes for #{type.underscore.pluralize}" do
+          jira_tracker.public_send("#{type}_events=", true)
+          jira_tracker.save
+
+          noteable = type == "commit" ? commit : mergereq
+          result = described_class.cross_reference(jira_issue, noteable, author)
+
+          expect(result).to eq(success_message)
+        end
+      end
+    end
+
     context 'in JIRA issue tracker' do
       before { jira_service_settings }
 

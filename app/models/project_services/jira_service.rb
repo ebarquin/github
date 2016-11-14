@@ -1,24 +1,3 @@
-# == Schema Information
-#
-# Table name: services
-#
-#  id                    :integer          not null, primary key
-#  type                  :string(255)
-#  title                 :string(255)
-#  project_id            :integer
-#  created_at            :datetime
-#  updated_at            :datetime
-#  active                :boolean          default(FALSE), not null
-#  properties            :text
-#  template              :boolean          default(FALSE)
-#  push_events           :boolean          default(TRUE)
-#  issues_events         :boolean          default(TRUE)
-#  merge_requests_events :boolean          default(TRUE)
-#  tag_push_events       :boolean          default(TRUE)
-#  note_events           :boolean          default(TRUE), not null
-#  build_events          :boolean          default(FALSE), not null
-#
-
 class JiraService < IssueTrackerService
   include Gitlab::Routing.url_helpers
 
@@ -29,6 +8,10 @@ class JiraService < IssueTrackerService
                 :jira_issue_transition_id, :title, :description
 
   before_update :reset_password
+
+  def supported_events
+    %w(commit merge_request)
+  end
 
   # {PROJECT-KEY}-{NUMBER} Examples: JIRA-1, PROJECT-1
   def reference_pattern
@@ -133,9 +116,13 @@ class JiraService < IssueTrackerService
   end
 
   def create_cross_reference_note(mentioned, noteable, author)
+    unless can_cross_reference?(noteable: noteable)
+      return "Events for #{noteable.model_name.plural.humanize(capitalize: false)} are disabled."
+    end
+
     issue_key = mentioned.id
     project = self.project
-    noteable_name = noteable.class.name.underscore.downcase
+    noteable_name = noteable.model_name.singular
     noteable_id = if noteable.is_a?(Commit)
                     noteable.id
                   else
@@ -190,7 +177,16 @@ class JiraService < IssueTrackerService
 
   private
 
+  def can_cross_reference?(noteable:)
+    return commit_events if noteable.is_a?(Commit)
+    return merge_requests_events if noteable.is_a?(MergeRequest)
+
+    true
+  end
+
   def close_issue(entity, issue)
+    return unless jira_issue_transition_id.present?
+
     commit_id = if entity.is_a?(Commit)
                   entity.id
                 elsif entity.is_a?(MergeRequest)

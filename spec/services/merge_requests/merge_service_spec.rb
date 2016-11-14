@@ -59,20 +59,32 @@ describe MergeRequests::MergeService, services: true do
         include JiraServiceHelper
 
         let(:jira_tracker) { project.create_jira_service }
+        let(:jira_issue)   { ExternalIssue.new('JIRA-123', project) }
+        let(:commit)       { double('commit', safe_message: "Fixes #{jira_issue.to_reference}") }
 
         before do
           project.update_attributes!(has_external_issue_tracker: true)
           jira_service_settings
+          stub_jira_urls(jira_issue.id)
+          allow(merge_request).to receive(:commits).and_return([commit])
         end
 
         it 'closes issues on JIRA issue tracker' do
-          jira_issue = ExternalIssue.new('JIRA-123', project)
-          commit = double('commit', safe_message: "Fixes #{jira_issue.to_reference}")
           allow(merge_request).to receive(:commits).and_return([commit])
 
           expect_any_instance_of(JiraService).to receive(:close_issue).with(merge_request, jira_issue).once
 
           service.execute(merge_request)
+        end
+
+        context "when jira_issue_transition_id is not present" do
+          it "does not close issue" do
+            allow(jira_tracker).to receive_messages(jira_issue_transition_id: nil)
+
+            expect_any_instance_of(JiraService).not_to receive(:close_issue)
+
+            service.execute(merge_request)
+          end
         end
 
         context "wrong issue markdown" do

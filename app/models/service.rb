@@ -1,3 +1,25 @@
+# == Schema Information
+#
+# Table name: services
+#
+#  id                    :integer          not null, primary key
+#  type                  :string(255)
+#  title                 :string(255)
+#  project_id            :integer
+#  created_at            :datetime
+#  updated_at            :datetime
+#  active                :boolean          default(FALSE), not null
+#  properties            :text
+#  template              :boolean          default(FALSE)
+#  push_events           :boolean          default(TRUE)
+#  issues_events         :boolean          default(TRUE)
+#  commits_events        :boolean          default(TRUE)
+#  merge_requests_events :boolean          default(TRUE)
+#  tag_push_events       :boolean          default(TRUE)
+#  note_events           :boolean          default(TRUE), not null
+#  build_events          :boolean          default(FALSE), not null
+#
+
 # To add new service you should build a class inherited from Service
 # and implement a set of methods
 class Service < ActiveRecord::Base
@@ -8,6 +30,7 @@ class Service < ActiveRecord::Base
   default_value_for :push_events, true
   default_value_for :issues_events, true
   default_value_for :confidential_issues_events, true
+  default_value_for :commit_events, true
   default_value_for :merge_requests_events, true
   default_value_for :tag_push_events, true
   default_value_for :note_events, true
