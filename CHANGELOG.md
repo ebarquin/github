@@ -19,6 +19,7 @@ entry.
 - Fix project records with invalid visibility_level values. !7391
 - Use 'Forking in progress' title when appropriate. !7394 (Philip Karpiak)
 - Fix error links in help index page. !7396 (Fu Xu)
+- Swapped out airbnb eslint config for the airbnb base config (!7470)
 - [Fix] Extra divider issue in dropdown. !7398
 - Project download buttons always show. !7405 (Philip Karpiak)
 - Give search-input correct padding-right value. !7407 (Philip Karpiak)

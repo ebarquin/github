@@ -94,9 +94,7 @@
 
           expect($.ajax.calls.count()).toBe(2);
           let [{ url, dataType, success, context }] = $.ajax.calls.argsFor(1);
-          expect(url).toBe(
-            'http://example.com/root/test-build/builds/2/trace.json?state=buildstate'
-          );
+          expect(url).toBe('http://example.com/root/test-build/builds/2/trace.json?state=buildstate');
           expect(dataType).toBe('json');
           expect(success).toEqual(jasmine.any(Function));
 
@@ -114,9 +112,7 @@
 
           expect($.ajax.calls.count()).toBe(3);
           [{ url, dataType, success, context }] = $.ajax.calls.argsFor(2);
-          expect(url).toBe(
-            'http://example.com/root/test-build/builds/2/trace.json?state=newstate'
-          );
+          expect(url).toBe('http://example.com/root/test-build/builds/2/trace.json?state=newstate');
           expect(dataType).toBe('json');
           expect(success).toEqual(jasmine.any(Function));
 
@@ -165,9 +161,7 @@
             append: true,
           });
 
-          expect(Turbolinks.visit).toHaveBeenCalledWith(
-            'http://example.com/root/test-build/builds/2'
-          );
+          expect(Turbolinks.visit).toHaveBeenCalledWith('http://example.com/root/test-build/builds/2');
         });
       });
     });
