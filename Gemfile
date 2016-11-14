@@ -67,7 +67,7 @@ gem 'gollum-rugged_adapter', '~> 0.4.2', require: false
 gem 'github-linguist', '~> 4.7.0', require: 'linguist'
 
 # API
-gem 'grape',        '~> 0.18.0'
+gem 'grape',        git: 'https://github.com/ruby-grape/grape.git'
 gem 'grape-entity', '~> 0.4.2'
 gem 'rack-cors',    '~> 0.4.0', require: 'rack/cors'
 
