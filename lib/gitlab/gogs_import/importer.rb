@@ -16,7 +16,7 @@ module Gitlab
 
         if credentials
           uri = URI.parse(project.import_url)
-          host = "#{uri.scheme}://#{url.host}#{uri.path}".gsub(/[\w-]+\/[\w-]+\.git/, '')
+          host = "#{uri.scheme}://#{uri.host}:#{uri.port}#{uri.path}".sub(/[\w-]+\/[\w-]+\.git\z/, '')
           @client = GithubImport::Client.new(credentials[:user], host: host, api_version: 'v1')
         else
           raise Projects::ImportService::Error, "Unable to find project import data credentials for project ID: #{@project.id}"
@@ -31,10 +31,23 @@ module Gitlab
         import_comments(:issues)
         import_comments(:pull_requests)
         import_wiki
+        # NOTE: this is commented out since Gogs doesn't have release-API yet
         # import_releases
         handle_errors
 
         true
+      end
+
+      def import_milestones
+        fetch_resources(:milestones, repo, state: :all, per_page: 100) do |milestones|
+          milestones.each do |raw|
+            begin
+              GogsImport::MilestoneFormatter.new(project, raw).create!
+            rescue => e
+              errors << { type: :milestone, url: Gitlab::UrlSanitizer.sanitize(raw.url), errors: e.message }
+            end
+          end
+        end
       end
     end
   end
