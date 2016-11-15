@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161109150329) do
+ActiveRecord::Schema.define(version: 20161115173905) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -703,6 +703,7 @@ ActiveRecord::Schema.define(version: 20161109150329) do
     t.integer "iid"
     t.text "title_html"
     t.text "description_html"
+    t.date "start_date"
   end
 
   add_index "milestones", ["description"], name: "index_milestones_on_description_trigram", using: :gin, opclasses: {"description"=>"gin_trgm_ops"}

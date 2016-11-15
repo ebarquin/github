@@ -15,6 +15,7 @@ module API
       params :optional_params do
         optional :description, type: String, desc: 'The description of the milestone'
         optional :due_date, type: String, desc: 'The due date of the milestone'
+        optional :start_date, type: String, desc: 'The start date of the milestone'
       end
     end
 

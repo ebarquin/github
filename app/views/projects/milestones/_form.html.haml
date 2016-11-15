@@ -16,6 +16,12 @@
           .error-alert
     .col-md-6
       .form-group
+        = f.label :start_date, "Start Date", class: "control-label"
+        .col-sm-10
+          = f.text_field :start_date, class: "datepicker form-control", placeholder: "Select start date"
+          %a.inline.prepend-top-5.js-clear-start-date{ href: "#" } Clear start date
+    .col-md-6
+      .form-group
         = f.label :due_date, "Due Date", class: "control-label"
         .col-sm-10
           = f.text_field :due_date, class: "datepicker form-control", placeholder: "Select due date"
@@ -28,3 +34,8 @@
     -else
       = f.submit 'Save changes', class: "btn-save btn"
       = link_to "Cancel", namespace_project_milestone_path(@project.namespace, @project, @milestone), class: "btn btn-cancel"
+
+:javascript
+  $(".datepicker").datepicker({
+    dateFormat: "yy-mm-dd"
+  });

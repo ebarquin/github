@@ -1,5 +1,7 @@
 - if milestone.expired? and not milestone.closed?
   %span.cred (Expired)
-- if milestone.expires_at
+- if milestone.upcoming?
+  %span.clgray (Upcoming)
+- if milestone.date_range
   %span
-    = milestone.expires_at
+    = milestone.date_range

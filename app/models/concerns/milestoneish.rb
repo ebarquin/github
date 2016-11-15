@@ -23,6 +23,12 @@ module Milestoneish
     (due_date - Date.today).to_i
   end
 
+  def elapsed_days
+    return 0 if !start_date || start_date.future?
+
+    (Date.today - start_date).to_i
+  end
+
   def issues_visible_to_user(user = nil)
     issues.visible_to_user(user)
   end

@@ -38,6 +38,12 @@
 
     .col-md-6
       .form-group
+        = f.label :start_date, "Start date", class: "control-label"
+        .col-sm-10
+          = f.text_field :start_date, class: "datepicker form-control", placeholder: "Select start date"
+
+    .col-md-6
+      .form-group
         = f.label :due_date, "Due Date", class: "control-label"
         .col-sm-10
           = f.text_field :due_date, class: "datepicker form-control", placeholder: "Select due date"
@@ -49,6 +55,5 @@
 
 :javascript
   $(".datepicker").datepicker({
-    dateFormat: "yy-mm-dd",
-    onSelect: function(dateText, inst) { $("#milestone_due_date").val(dateText) }
-  }).datepicker("setDate", $.datepicker.parseDate('yy-mm-dd', $('#milestone_due_date').val()));
+    dateFormat: "yy-mm-dd"
+  });

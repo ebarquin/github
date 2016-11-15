@@ -7,7 +7,7 @@ class Spinach::Features::ProjectIssuesMilestones < Spinach::FeatureSteps
   step 'I should see milestone "v2.2"' do
     milestone = @project.milestones.find_by(title: "v2.2")
     expect(page).to have_content(milestone.title[0..10])
-    expect(page).to have_content(milestone.expires_at)
+    expect(page).to have_content(milestone.date_range)
     expect(page).to have_content("Issues")
   end
 
@@ -27,7 +27,7 @@ class Spinach::Features::ProjectIssuesMilestones < Spinach::FeatureSteps
   step 'I should see milestone "v2.3"' do
     milestone = @project.milestones.find_by(title: "v2.3")
     expect(page).to have_content(milestone.title[0..10])
-    expect(page).to have_content(milestone.expires_at)
+    expect(page).to have_content(milestone.date_range)
     expect(page).to have_content("Issues")
   end
 

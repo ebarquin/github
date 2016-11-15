@@ -132,19 +132,27 @@ class Milestone < ActiveRecord::Base
   end
 
   def expired?
-    if due_date
-      due_date.past?
-    else
-      false
-    end
+    due_date && due_date.past?
   end
 
-  def expires_at
-    if due_date
+  def upcoming?
+    start_date && start_date.future?
+  end
+
+  def date_range
+    if start_date && due_date
+      "#{start_date.to_s(:medium)} - #{due_date.to_s(:medium)}"
+    elsif due_date
       if due_date.past?
         "expired on #{due_date.to_s(:medium)}"
       else
         "expires on #{due_date.to_s(:medium)}"
+      end
+    elsif start_date
+      if start_date.past?
+        "started on #{start_date.to_s(:medium)}"
+      else
+        "starts on #{start_date.to_s(:medium)}"
       end
     end
   end

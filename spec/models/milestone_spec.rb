@@ -58,16 +58,17 @@ describe Milestone, models: true do
     end
   end
 
-  describe "#expires_at" do
-    it "is nil when due_date is unset" do
-      milestone.update_attributes(due_date: nil)
-      expect(milestone.expires_at).to be_nil
+  describe "#date_range" do
+    def date_range_for(*args)
+      build(:milestone, *args).date_range
     end
 
-    it "is not nil when due_date is set" do
-      milestone.update_attributes(due_date: Date.tomorrow)
-      expect(milestone.expires_at).to be_present
-    end
+    it { expect(date_range_for(due_date: nil, start_date: nil)).to be_nil }
+    it { expect(date_range_for(due_date: Date.tomorrow)).to include('expires on') }
+    it { expect(date_range_for(due_date: Date.yesterday)).to include('expired on') }
+    it { expect(date_range_for(start_date: Date.tomorrow)).to include('starts on') }
+    it { expect(date_range_for(start_date: Date.yesterday)).to include('started on') }
+    it { expect(date_range_for(start_date: Date.yesterday, due_date: Date.tomorrow)).to match(/^.* - .*$/) }
   end
 
   describe '#expired?' do
@@ -85,6 +86,18 @@ describe Milestone, models: true do
       end
 
       it { expect(milestone.expired?).to be_falsey }
+    end
+  end
+
+  describe '#upcoming?' do
+    it 'returns true' do
+      milestone = build(:milestone, start_date: Time.now + 1.month)
+      expect(milestone.upcoming?).to be_truthy
+    end
+
+    it 'returns false' do
+      milestone = build(:milestone, start_date: Date.today.prev_year)
+      expect(milestone.upcoming?).to be_falsey
     end
   end
 

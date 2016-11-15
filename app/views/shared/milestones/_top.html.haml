@@ -12,10 +12,10 @@
       Open
   %span.identifier
     Milestone #{milestone.title}
-  - if milestone.expires_at
+  - if milestone.date_range
     %span.creator
       &middot;
-      = milestone.expires_at
+      = milestone.date_range
   - if group
     .pull-right
       - if can?(current_user, :admin_milestones, group)
