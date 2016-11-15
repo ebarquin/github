@@ -21,7 +21,6 @@ before_script:
   - cp config/gitlab.yml.example config/gitlab.yml
   - bundle --version
   - '[ "$USE_BUNDLE_INSTALL" != "true" ] || retry bundle install --without postgres production --jobs $(nproc) "${FLAGS[@]}"'
-  - retry gem install knapsack
   - '[ "$SETUP_DB" != "true" ] || bundle exec rake db:drop db:create db:schema:load db:migrate add_limits_mysql'
 
 stages:
@@ -32,6 +31,7 @@ stages:
 
 # Prepare and merge knapsack tests
 .knapsack-state: &knapsack-state
+  image: "dev.gitlab.org:5005/gitlab/gitlab-build-images:ruby-2.3-static-analyses"
   services: []
   variables:
     SETUP_DB: "false"
@@ -196,6 +196,7 @@ spinach 9 10 ruby21: *spinach-knapsack-ruby21
 # Other generic tests
 
 .ruby-static-analysis: &ruby-static-analysis
+  image: "dev.gitlab.org:5005/gitlab/gitlab-build-images:ruby-2.3-static-analyses"
   variables:
     SIMPLECOV: "false"
     SETUP_DB: "false"
