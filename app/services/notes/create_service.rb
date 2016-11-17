@@ -1,9 +1,17 @@
 module Notes
   class CreateService < BaseService
     def execute
+      thread_discussion_id = params.delete(:thread_discussion_id)
+      params[:type] = ThreadNote.name if params.delete(:new_thread)
+
       note = project.notes.new(params)
       note.author = current_user
       note.system = false
+
+      if note.is_a?(ThreadNote) && thread_discussion_id
+        thread_exists = note.noteable.notes.thread_notes.exists?(discussion_id: thread_discussion_id)
+        note.thread_discussion_id = thread_discussion_id if thread_exists
+      end
 
       if note.award_emoji?
         noteable = note.noteable

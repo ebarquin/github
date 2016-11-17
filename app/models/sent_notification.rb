@@ -1,6 +1,8 @@
 class SentNotification < ActiveRecord::Base
   serialize :position, Gitlab::Diff::Position
 
+  # TODO: Store `thread_discussion_id`
+
   belongs_to :project
   belongs_to :noteable, polymorphic: true
   belongs_to :recipient, class_name: "User"
@@ -46,9 +48,12 @@ class SentNotification < ActiveRecord::Base
     end
 
     def record_note(note, recipient_id, reply_key, attrs = {})
-      if note.diff_note?
-        attrs[:note_type] = note.type
+      attrs.merge!(
+        note_type:            note.type,
+        thread_discussion_id: note.discussion_id
+      )
 
+      if note.diff_note?
         attrs.merge!(note.diff_attributes)
       end
 
@@ -91,14 +96,15 @@ class SentNotification < ActiveRecord::Base
 
   def note_attributes
     {
-      project:        self.project,
-      author:         self.recipient,
-      type:           self.note_type,
-      noteable_type:  self.noteable_type,
-      noteable_id:    self.noteable_id,
-      commit_id:      self.commit_id,
-      line_code:      self.line_code,
-      position:       self.position.to_json
+      project:              self.project,
+      author:               self.recipient,
+      type:                 self.note_type,
+      noteable_type:        self.noteable_type,
+      noteable_id:          self.noteable_id,
+      commit_id:            self.commit_id,
+      line_code:            self.line_code,
+      position:             self.position.to_json,
+      thread_discussion_id: self.thread_discussion_id
     }
   end
 

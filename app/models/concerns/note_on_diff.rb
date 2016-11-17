@@ -5,6 +5,10 @@ module NoteOnDiff
     true
   end
 
+  def threaded?
+    true
+  end
+
   def diff_file
     raise NotImplementedError
   end
@@ -23,13 +27,5 @@ module NoteOnDiff
 
   def diff_attributes
     raise NotImplementedError
-  end
-
-  def can_be_award_emoji?
-    false
-  end
-
-  def to_discussion
-    Discussion.new([self])
   end
 end

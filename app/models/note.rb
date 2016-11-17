@@ -8,6 +8,7 @@ class Note < ActiveRecord::Base
   include FasterCacheKeys
   include CacheMarkdownField
   include AfterCommitQueue
+  include ResolvableNote
 
   cache_markdown_field :note, pipeline: :note
 
@@ -19,6 +20,9 @@ class Note < ActiveRecord::Base
   # Banzai::ObjectRenderer
   attr_accessor :user_visible_reference_count
 
+  # The discussion ID for the `ThreadNote` thread being replied to
+  attr_accessor :thread_discussion_id
+
   default_value_for :system, false
 
   attr_mentionable :note, pipeline: :note
@@ -28,9 +32,6 @@ class Note < ActiveRecord::Base
   belongs_to :noteable, polymorphic: true, touch: true
   belongs_to :author, class_name: "User"
   belongs_to :updated_by, class_name: "User"
-
-  # Only used by DiffNote, but defined here so that it can be used in `Note.includes`
-  belongs_to :resolved_by, class_name: "User"
 
   has_many :todos, dependent: :destroy
   has_many :events, as: :target, dependent: :destroy
@@ -49,6 +50,7 @@ class Note < ActiveRecord::Base
   validates :noteable_id, presence: true, unless: [:for_commit?, :importing?]
   validates :commit_id, presence: true, if: :for_commit?
   validates :author, presence: true
+  validates :discussion_id, presence: true, format: { with: /\A\h{40}\z/ }
 
   validate unless: [:for_commit?, :importing?] do |note|
     unless note.noteable.try(:project) == note.project
@@ -68,8 +70,9 @@ class Note < ActiveRecord::Base
   scope :inc_author, ->{ includes(:author) }
   scope :inc_relations_for_view, ->{ includes(:project, :author, :updated_by, :resolved_by, :award_emoji) }
 
+  scope :thread_notes, ->{ where(type: 'ThreadNote') }
   scope :diff_notes, ->{ where(type: ['LegacyDiffNote', 'DiffNote']) }
-  scope :non_diff_notes, ->{ where(type: ['Note', nil]) }
+  scope :non_diff_notes, ->{ where(type: ['Note', 'ThreadNote', nil]) }
 
   scope :with_associations, -> do
     # FYI noteable cannot be loaded for LegacyDiffNote for commits
@@ -93,6 +96,10 @@ class Note < ActiveRecord::Base
 
     def discussion_id(*args)
       Digest::SHA1.hexdigest(build_discussion_id(*args))
+    end
+
+    def resolvable?
+      false
     end
 
     def discussions
@@ -143,16 +150,8 @@ class Note < ActiveRecord::Base
     true
   end
 
-  def resolvable?
+  def threaded?
     false
-  end
-
-  def resolved?
-    false
-  end
-
-  def to_be_resolved?
-    resolvable? && !resolved?
   end
 
   def max_attachment_size
@@ -236,7 +235,7 @@ class Note < ActiveRecord::Base
   end
 
   def can_be_award_emoji?
-    noteable.is_a?(Awardable)
+    noteable.is_a?(Awardable) && !threaded?
   end
 
   def contains_emoji_only?
@@ -245,6 +244,10 @@ class Note < ActiveRecord::Base
 
   def award_emoji_name
     note.match(Banzai::Filter::EmojiFilter.emoji_pattern)[1]
+  end
+
+  def to_discussion
+    Discussion.new([self])
   end
 
   private

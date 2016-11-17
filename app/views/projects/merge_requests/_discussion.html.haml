@@ -1,4 +1,6 @@
 - content_for :note_actions do
+  = submit_tag 'Start resolvable discussion', name: 'note[new_thread]', class: "btn btn-nr append-right-10 comment-btn js-comment-button btn-inverted js-note-new-thread", data: { quick_submit_alt: true }
+
   - if can?(current_user, :update_merge_request, @merge_request)
     - if @merge_request.open?
       = link_to 'Close merge request', merge_request_path(@merge_request, merge_request: {state_event: :close }), method: :put, class: "btn btn-nr btn-comment btn-close close-mr-link js-note-target-close", title: "Close merge request", data: {original_text: "Close merge request", alternative_text: "Comment & close merge request"}

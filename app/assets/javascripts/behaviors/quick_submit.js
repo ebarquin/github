@@ -31,38 +31,64 @@
   };
 
   $(document).on('keydown.quick_submit', '.js-quick-submit', function(e) {
-    var $form, $submit_button;
+    var $form, $submitButton, $altSubmitButton;
     // Enter
     if (!keyCodeIs(e, 13)) {
       return;
     }
-    if (!((e.metaKey && !e.altKey && !e.ctrlKey && !e.shiftKey) || (e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey))) {
+    if (e.shiftKey || (e.metaKey && e.ctrlKey)) {
       return;
+    }
+    if (!(e.metaKey || e.ctrlKey)) {
+      return;
+    }
+    $form = $(e.target).closest('form');
+    $submitButton = $form.find('input[type=submit], button[type=submit]');
+    if (e.altKey) {
+      $submitButton = $submitButton.filter('[data-quick-submit-alt]');
+      if ($submitButton.length === 0) {
+        return;
+      }
     }
     e.preventDefault();
-    $form = $(e.target).closest('form');
-    $submit_button = $form.find('input[type=submit], button[type=submit]');
-    if ($submit_button.attr('disabled')) {
+    if ($submitButton.attr('disabled')) {
       return;
     }
-    $submit_button.disable();
-    return $form.submit();
+     // Click button instead of submitting form, so that button name and value are sent along
+    $submitButton.click();
   });
 
   // If the user tabs to a submit button on a `js-quick-submit` form, display a
   // tooltip to let them know they could've used the hotkey
   $(document).on('keyup.quick_submit', '.js-quick-submit input[type=submit], .js-quick-submit button[type=submit]', function(e) {
-    var $this, title;
+    var $this, title, quickSubmitAlt;
     // Tab
     if (!keyCodeIs(e, 9)) {
       return;
     }
-    if (isMac()) {
-      title = "You can also press &#8984;-Enter";
-    } else {
-      title = "You can also press Ctrl-Enter";
-    }
+
     $this = $(this);
+
+    quickSubmitAlt = $this.data('quick-submit-alt');
+
+    if (isMac()) {
+      if (quickSubmitAlt) {
+        shortcut = "&#8997&#8984;&#9166;";
+      }
+      else {
+        shortcut = "&#8984;&#9166;";
+      }
+    } else {
+      if (quickSubmitAlt) {
+        shortcut = "Ctrl-Alt-Enter";
+      }
+      else {
+        shortcut = "Ctrl-Enter";
+      }
+    }
+
+    title = "You can also press " + shortcut;
+
     return $this.tooltip({
       container: 'body',
       html: 'true',

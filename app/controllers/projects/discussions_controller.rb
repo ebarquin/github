@@ -30,7 +30,7 @@ class Projects::DiscussionsController < Projects::ApplicationController
   end
 
   def discussion
-    @discussion ||= @merge_request.find_diff_discussion(params[:id]) || render_404
+    @discussion ||= @merge_request.find_resolvable_discussion(params[:id]) || render_404
   end
 
   def authorize_resolve_discussion!

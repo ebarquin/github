@@ -20,16 +20,18 @@
 
           .inline.discussion-headline-light
             = discussion.author.to_reference
-            started a discussion on
+            started a discussion
 
             - if discussion.for_commit?
+              on
               - commit = discussion.noteable
               - if commit
                 commit
                 = link_to commit.short_id, namespace_project_commit_path(discussion.project.namespace, discussion.project, discussion.noteable, anchor: discussion.line_code), class: 'monospace'
               - else
                 a deleted commit
-            - else
+            - elsif discussion.diff_discussion?
+              on
               - if discussion.active?
                 = link_to diffs_namespace_project_merge_request_path(discussion.project.namespace, discussion.project, discussion.noteable, anchor: discussion.line_code) do
                   the diff

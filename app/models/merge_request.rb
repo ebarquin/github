@@ -453,7 +453,7 @@ class MergeRequest < ActiveRecord::Base
     should_remove_source_branch? || force_remove_source_branch?
   end
 
-  def mr_and_commit_notes
+  def related_notes
     # Fetch comments only from last 100 commits
     commits_for_notes_limit = 100
     commit_ids = commits.last(commits_for_notes_limit).map(&:id)
@@ -469,29 +469,29 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def discussions
-    @discussions ||= self.mr_and_commit_notes.
+    @discussions ||= self.related_notes.
       inc_relations_for_view.
       fresh.
       discussions
   end
 
-  def diff_discussions
-    @diff_discussions ||= self.notes.diff_notes.discussions
+  def resolvable_discussions
+    @resolvable_discussions ||= self.notes.resolvable.fresh.discussions
   end
 
-  def find_diff_discussion(discussion_id)
-    notes = self.notes.diff_notes.where(discussion_id: discussion_id).fresh.to_a
+  def find_resolvable_discussion(discussion_id)
+    notes = self.notes.resolvable.where(discussion_id: discussion_id).fresh.to_a
     return if notes.empty?
 
     Discussion.new(notes)
   end
 
   def discussions_resolvable?
-    diff_discussions.any?(&:resolvable?)
+    resolvable_discussions.any?(&:resolvable?)
   end
 
   def discussions_resolved?
-    discussions_resolvable? && diff_discussions.none?(&:to_be_resolved?)
+    discussions_resolvable? && resolvable_discussions.none?(&:to_be_resolved?)
   end
 
   def mergeable_discussions_state?

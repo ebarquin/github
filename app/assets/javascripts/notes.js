@@ -191,11 +191,7 @@
             _this.last_fetched_at = data.last_fetched_at;
             _this.setPollingInterval(data.notes.length);
             return $.each(notes, function(i, note) {
-              if (note.discussion_html != null) {
-                return _this.renderDiscussionNote(note);
-              } else {
-                return _this.renderNote(note);
-              }
+              _this.renderNote(note);
             });
           };
         })(this)
@@ -239,6 +235,10 @@
 
     Notes.prototype.renderNote = function(note) {
       var $notesList, votesBlock;
+      if (note.discussion_html != null) {
+        return this.renderDiscussionNote(note);
+      }
+
       if (!note.valid) {
         if (note.award) {
           new Flash('You have already awarded this emoji!', 'alert', this.parentTimeline);
@@ -386,6 +386,7 @@
       form.find("#note_line_code").remove();
       form.find("#note_position").remove();
       form.find("#note_type").remove();
+      form.find("#note_thread_discussion_id").remove();
       form.find('.js-comment-resolve-button').closest('comment-and-resolve-btn').remove();
       return this.parentTimeline = form.parents('.timeline');
     };
@@ -442,7 +443,7 @@
         }
       }
 
-      this.renderDiscussionNote(note);
+      this.renderNote(note);
       // cleanup after successfully creating a diff/discussion note
       this.removeDiscussionNoteForm($form);
     };
@@ -637,8 +638,10 @@
       form.find("#note_position").val(dataHolder.attr("data-position"));
       form.find("#note_noteable_type").val(dataHolder.data("noteableType"));
       form.find("#note_noteable_id").val(dataHolder.data("noteableId"));
+      form.find("#note_thread_discussion_id").val(dataHolder.data("discussionId"));
       form.find('.js-note-discard').show().removeClass('js-note-discard').addClass('js-close-discussion-note-form').text(form.find('.js-close-discussion-note-form').data('cancel-text'));
       form.find('.js-note-target-close').remove();
+      form.find('.js-note-new-thread').remove();
       this.setupNoteForm(form);
 
       if (typeof gl.diffNotesCompileComponents !== 'undefined') {

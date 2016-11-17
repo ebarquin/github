@@ -10,7 +10,9 @@ class Discussion
             :noteable,
             :for_commit?,
             :for_merge_request?,
+            :potentially_resolvable?,
 
+            # DiffNote
             :line_code,
             :original_line_code,
             :diff_file,
@@ -70,7 +72,7 @@ class Discussion
   def resolvable?
     return @resolvable if @resolvable.present?
 
-    @resolvable = diff_discussion? && notes.any?(&:resolvable?)
+    @resolvable = potentially_resolvable? && notes.any?(&:resolvable?)
   end
 
   def resolved?
@@ -115,10 +117,6 @@ class Discussion
     update { |notes| notes.unresolve! }
   end
 
-  def for_target?(target)
-    self.noteable == target && !diff_discussion?
-  end
-
   def active?
     return @active if @active.present?
 
@@ -126,19 +124,27 @@ class Discussion
   end
 
   def collapsed?
-    return false unless diff_discussion?
+    return false unless threaded?
 
     if resolvable?
       # New diff discussions only disappear once they are marked resolved
       resolved?
-    else
+    elsif diff_discussion?
       # Old diff discussions disappear once they become outdated
       !active?
+    else
+      false
     end
   end
 
   def expanded?
     !collapsed?
+  end
+
+  def threaded?(target = nil)
+    return @threaded if @threaded.present?
+
+    @threaded = (target && self.noteable != target) || first_note.threaded?
   end
 
   def reply_attributes
@@ -147,19 +153,18 @@ class Discussion
       noteable_id:   first_note.noteable_id,
       commit_id:     first_note.commit_id,
       discussion_id: self.id,
+      note_type:     first_note.type
     }
 
-    if diff_discussion?
-      data[:note_type] = first_note.type
-
-      data.merge!(first_note.diff_attributes)
-    end
+    data.merge!(first_note.diff_attributes) if diff_discussion?
 
     data
   end
 
   # Returns an array of at most 16 highlighted lines above a diff note
   def truncated_diff_lines
+    return unless diff_discussion?
+
     prev_lines = []
 
     highlighted_diff_lines.each do |line|
@@ -180,7 +185,7 @@ class Discussion
   private
 
   def update
-    notes_relation = DiffNote.where(id: notes.map(&:id)).fresh
+    notes_relation = Note.where(id: notes.map(&:id)).fresh
     yield(notes_relation)
 
     # Set the notes array to the updated notes
