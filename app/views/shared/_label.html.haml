@@ -51,4 +51,4 @@
 
   - if current_user && label.is_a?(ProjectLabel)
     :javascript
-      new Subscription('##{dom_id(label)} .label-subscription');
+      gl.Subscription.bindAll('##{dom_id(label)} .label-subscription');
