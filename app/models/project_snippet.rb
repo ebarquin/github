@@ -9,4 +9,8 @@ class ProjectSnippet < Snippet
 
   participant :author
   participant :notes_with_associations
+
+  def self.model_name
+    Snippet.model_name
+  end
 end

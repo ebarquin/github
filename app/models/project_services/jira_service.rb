@@ -135,8 +135,8 @@ class JiraService < IssueTrackerService
   def create_cross_reference_note(mentioned, noteable, author)
     issue_key = mentioned.id
     project = self.project
-    noteable_name = noteable.class.name.underscore.downcase
-    noteable_id = if noteable.is_a?(Commit)
+    noteable_name = noteable.model_name.singular
+    noteable_id = if noteable.is_a?(Commit) || noteable.is_a?(Snippet)
                     noteable.id
                   else
                     noteable.iid
